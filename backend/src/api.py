@@ -9,7 +9,7 @@ Funktioner:
 - Metrics för övervakning
 """
 
-from fastapi import FastAPI, HTTPException, Query, BackgroundTasks, Request
+from fastapi import FastAPI, HTTPException, Query, Path, BackgroundTasks, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.exceptions import RequestValidationError
@@ -1339,7 +1339,7 @@ async def get_poit_daily_stats(request: Request):
 @limiter.limit(RATE_LIMIT_DEFAULT)
 async def get_poit_stats_by_date(
     request: Request,
-    stats_date: str = Query(..., description="Datum i format YYYY-MM-DD")
+    stats_date: str = Path(..., description="Datum i format YYYY-MM-DD")
 ):
     """
     Hämta POIT-statistik för ett specifikt datum.
