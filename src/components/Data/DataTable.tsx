@@ -1,10 +1,11 @@
-import { TrendingUp, TrendingDown, ExternalLink, ChevronUp, ChevronDown, ChevronsUpDown, Building2, Globe, FileText, Award, Users, Linkedin, Bell, DollarSign, Percent, UserCheck, Building } from 'lucide-react'
+import { TrendingUp, TrendingDown, ExternalLink, ChevronUp, ChevronDown, ChevronsUpDown, Globe, FileText, Award, Users, Linkedin, Bell, DollarSign, Percent, UserCheck, Building, Filter, Download, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { CompanyWithCoords } from '../../lib/supabase'
 import { useMapContext } from '../../context/MapContext'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 
 interface DataTableProps {
   companies: CompanyWithCoords[]
+  isLoading?: boolean
 }
 
 type SortField = 'name' | 'sector' | 'turnover' | 'turnover2023' | 'ebit2023' | 'ebit2024' | 'growth' | 'funding' | 'latestRound' | 'valuation' | 'city' | 'ceo' | 'chairman' | 'boardCount' | 'employees' | 'trademarks' | 'annualReport' | 'investors' | 'equityRatio' | 'announcements' | 'sniCode' | 'parentCompany' | 'ownerCount'
@@ -112,11 +113,146 @@ function getSectorColor(sector: string | null) {
   return { bg: 'bg-gray-50', text: 'text-gray-600', border: 'border-gray-200' }
 }
 
-export function DataTable({ companies }: DataTableProps) {
-  const { filters, setSelectedCompany } = useMapContext()
+// Skeleton Row for loading state
+function SkeletonRow({ columns }: { columns: number }) {
+  return (
+    <tr className="border-t border-gray-100 animate-pulse">
+      <td className="px-4 py-4 sticky left-0 bg-white">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gray-200" />
+          <div className="space-y-2">
+            <div className="h-4 w-32 bg-gray-200 rounded" />
+            <div className="h-3 w-20 bg-gray-100 rounded" />
+          </div>
+        </div>
+      </td>
+      {Array.from({ length: columns - 1 }).map((_, i) => (
+        <td key={i} className="px-3 py-4">
+          <div className="h-4 w-16 bg-gray-200 rounded ml-auto" />
+        </td>
+      ))}
+    </tr>
+  )
+}
+
+// Empty State component
+function EmptyState({ message, onClear }: { message: string; onClear?: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-16 text-center">
+      <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+        <Filter className="w-8 h-8 text-gray-400" />
+      </div>
+      <p className="text-gray-500 text-sm mb-4">{message}</p>
+      {onClear && (
+        <button
+          onClick={onClear}
+          className="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+        >
+          Rensa filter
+        </button>
+      )}
+    </div>
+  )
+}
+
+// Pagination component
+function Pagination({
+  page,
+  pageSize,
+  total,
+  onPageChange
+}: {
+  page: number
+  pageSize: number
+  total: number
+  onPageChange: (page: number) => void
+}) {
+  const totalPages = Math.ceil(total / pageSize)
+
+  const getPageNumbers = () => {
+    const pages: (number | 'ellipsis')[] = []
+    const maxVisible = 5
+
+    if (totalPages <= maxVisible + 2) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i)
+    } else {
+      pages.push(1)
+
+      let start = Math.max(2, page - 1)
+      let end = Math.min(totalPages - 1, page + 1)
+
+      if (page <= 3) end = Math.min(maxVisible, totalPages - 1)
+      if (page >= totalPages - 2) start = Math.max(2, totalPages - maxVisible + 1)
+
+      if (start > 2) pages.push('ellipsis')
+      for (let i = start; i <= end; i++) pages.push(i)
+      if (end < totalPages - 1) pages.push('ellipsis')
+      if (totalPages > 1) pages.push(totalPages)
+    }
+
+    return pages
+  }
+
+  if (totalPages <= 1) return null
+
+  return (
+    <div className="flex items-center justify-between">
+      <p className="text-sm text-gray-500">
+        Sida {page} av {totalPages}
+        <span className="hidden sm:inline"> · {total.toLocaleString('sv-SE')} företag</span>
+      </p>
+
+      <div className="flex items-center gap-1">
+        <button
+          onClick={() => onPageChange(page - 1)}
+          disabled={page <= 1}
+          className="px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+
+        {getPageNumbers().map((p, i) =>
+          p === 'ellipsis' ? (
+            <span key={`ellipsis-${i}`} className="px-2 text-gray-400">...</span>
+          ) : (
+            <button
+              key={p}
+              onClick={() => onPageChange(p)}
+              className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
+                page === p
+                  ? 'bg-gray-900 text-white font-medium'
+                  : 'text-gray-500 hover:bg-gray-100'
+              }`}
+            >
+              {p}
+            </button>
+          )
+        )}
+
+        <button
+          onClick={() => onPageChange(page + 1)}
+          disabled={page >= totalPages}
+          className="px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+export function DataTable({ companies, isLoading = false }: DataTableProps) {
+  const { filters, setFilters, setSelectedCompany } = useMapContext()
   const [sortField, setSortField] = useState<SortField | null>(null)
   const [sortDirection, setSortDirection] = useState<SortDirection>(null)
   const [expandedBoards, setExpandedBoards] = useState<Set<string>>(new Set())
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 50
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [filters.search, filters.sector])
 
   const toggleBoardExpand = (orgnr: string, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -252,9 +388,73 @@ export function DataTable({ companies }: DataTableProps) {
     return result
   }, [companies, filters.sector, filters.search, sortField, sortDirection])
 
+  // Paginate data
+  const paginatedCompanies = useMemo(() => {
+    const start = (currentPage - 1) * pageSize
+    return sortedAndFilteredCompanies.slice(start, start + pageSize)
+  }, [sortedAndFilteredCompanies, currentPage, pageSize])
+
+  // Clear all filters
+  const handleClearFilters = () => {
+    setFilters({ search: '', sector: null })
+  }
+
   return (
     <div className="h-full flex flex-col bg-white">
-      {/* Table Header */}
+      {/* Toolbar */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50/50">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-gray-500">
+            {sortedAndFilteredCompanies.length.toLocaleString('sv-SE')} företag
+            {(filters.search || filters.sector) && (
+              <span className="text-gray-400"> (filtrerat)</span>
+            )}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          {(filters.search || filters.sector) && (
+            <button
+              onClick={handleClearFilters}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              <Filter className="w-3.5 h-3.5" />
+              Rensa filter
+            </button>
+          )}
+          <button
+            onClick={() => {
+              // Export to CSV
+              const headers = ['Företag', 'Orgnr', 'Sektor', 'VD', 'Stad', 'Omsättning 2024', 'EBIT 2024', 'Tillväxt', 'Anställda', 'Webbplats']
+              const rows = sortedAndFilteredCompanies.map(c => [
+                c.name,
+                c.orgnr,
+                c.sector || '',
+                c.ceo_name || '',
+                c.city || '',
+                c.turnover_2024_sek || '',
+                c.ebit_2024_sek || '',
+                c.growth_2023_2024_percent || '',
+                c.num_employees || '',
+                c.website || ''
+              ])
+              const csv = [headers, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n')
+              const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' })
+              const url = URL.createObjectURL(blob)
+              const a = document.createElement('a')
+              a.href = url
+              a.download = `loop-foretag-${new Date().toISOString().split('T')[0]}.csv`
+              a.click()
+              URL.revokeObjectURL(url)
+            }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors"
+          >
+            <Download className="w-3.5 h-3.5" />
+            Exportera CSV
+          </button>
+        </div>
+      </div>
+
+      {/* Table Content */}
       <div className="overflow-x-auto flex-1">
         <table className="w-full min-w-[2200px]">
           <thead className="sticky top-0 bg-gray-50 border-b border-gray-200 z-10">
@@ -383,7 +583,13 @@ export function DataTable({ companies }: DataTableProps) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
-            {sortedAndFilteredCompanies.map((company, index) => (
+            {/* Loading State */}
+            {isLoading && Array.from({ length: 10 }).map((_, i) => (
+              <SkeletonRow key={`skeleton-${i}`} columns={26} />
+            ))}
+
+            {/* Data Rows */}
+            {!isLoading && paginatedCompanies.map((company, index) => (
               <tr
                 key={company.orgnr}
                 onClick={() => setSelectedCompany(company)}
@@ -786,26 +992,22 @@ export function DataTable({ companies }: DataTableProps) {
         </table>
 
         {/* Empty State */}
-        {sortedAndFilteredCompanies.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-16 text-gray-500">
-            <Building2 className="w-10 h-10 text-gray-300 mb-3" />
-            <p className="text-sm">Inga företag matchar din sökning</p>
-          </div>
+        {!isLoading && sortedAndFilteredCompanies.length === 0 && (
+          <EmptyState
+            message="Inga företag matchar din sökning"
+            onClear={(filters.search || filters.sector) ? handleClearFilters : undefined}
+          />
         )}
       </div>
 
-      {/* Footer */}
+      {/* Footer with Pagination */}
       <div className="border-t border-gray-200 px-4 py-3 bg-gray-50">
-        <div className="flex items-center justify-between text-sm">
-          <p className="text-gray-600">
-            Visar <span className="font-semibold text-gray-900">{sortedAndFilteredCompanies.length}</span> av <span className="font-semibold text-gray-900">{companies.length}</span> företag
-          </p>
-          {sortField && (
-            <p className="text-xs text-gray-400">
-              Sorterat: {sortField} ({sortDirection === 'asc' ? '↑' : '↓'})
-            </p>
-          )}
-        </div>
+        <Pagination
+          page={currentPage}
+          pageSize={pageSize}
+          total={sortedAndFilteredCompanies.length}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </div>
   )

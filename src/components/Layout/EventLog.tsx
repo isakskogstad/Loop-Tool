@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Activity, ChevronUp, ChevronDown, Database, RefreshCw, FileText } from 'lucide-react'
+import { ChevronDown, RefreshCw, Database, FileText, CheckCircle } from 'lucide-react'
 
 interface EventItem {
   id: string
@@ -10,7 +10,6 @@ interface EventItem {
   timestamp: Date
 }
 
-// Simulated events - in production this would come from actual API calls
 const eventTypes = [
   { type: 'fetch' as const, messages: ['Hämtade årsredovisning för', 'Laddade företagsdata för', 'Hämtade finansiell data för'] },
   { type: 'update' as const, messages: ['Uppdaterade styrelseledamöter för', 'Synkade ägardata för', 'Uppdaterade VD-info för'] },
@@ -42,56 +41,64 @@ const getEventIcon = (type: EventItem['type']) => {
   switch (type) {
     case 'fetch': return Database
     case 'update': return RefreshCw
-    case 'sync': return Activity
+    case 'sync': return CheckCircle
     case 'report': return FileText
-    default: return Activity
+    default: return CheckCircle
   }
 }
 
-const getEventColor = (type: EventItem['type']) => {
+const getEventIconClass = (type: EventItem['type']) => {
   switch (type) {
-    case 'fetch': return 'text-blue-500 bg-blue-50'
-    case 'update': return 'text-emerald-500 bg-emerald-50'
-    case 'sync': return 'text-purple-500 bg-purple-50'
-    case 'report': return 'text-amber-500 bg-amber-50'
-    default: return 'text-gray-500 bg-gray-50'
+    case 'fetch': return 'text-blue-600 bg-blue-50'
+    case 'update': return 'text-emerald-600 bg-emerald-50'
+    case 'sync': return 'text-emerald-600 bg-emerald-50'
+    case 'report': return 'text-amber-600 bg-amber-50'
+    default: return 'text-gray-600 bg-gray-50'
   }
+}
+
+function formatRelativeTime(date: Date): string {
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000)
+  if (seconds < 5) return 'Just nu'
+  if (seconds < 60) return `för ${seconds}s sedan`
+  const minutes = Math.floor(seconds / 60)
+  if (minutes < 60) return `för ${minutes}min sedan`
+  return date.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })
 }
 
 export function EventLog() {
   const [events, setEvents] = useState<EventItem[]>([])
   const [expanded, setExpanded] = useState(false)
+  const [, setTick] = useState(0) // For re-rendering relative times
 
-  // Generate initial events and periodic updates
   useEffect(() => {
-    // Generate some initial events
     const initialEvents: EventItem[] = []
     for (let i = 0; i < 5; i++) {
       const event = generateEvent()
-      event.timestamp = new Date(Date.now() - (i * 30000)) // Spread over last 2.5 min
+      event.timestamp = new Date(Date.now() - (i * 30000))
       initialEvents.push(event)
     }
     setEvents(initialEvents)
 
-    // Add new events periodically (every 15-45 seconds)
     const interval = setInterval(() => {
       const newEvent = generateEvent()
-      setEvents(prev => [newEvent, ...prev.slice(0, 9)]) // Keep max 10 events
+      setEvents(prev => [newEvent, ...prev.slice(0, 9)])
     }, 15000 + Math.random() * 30000)
 
-    return () => clearInterval(interval)
+    // Update relative times every 10 seconds
+    const tickInterval = setInterval(() => setTick(t => t + 1), 10000)
+
+    return () => {
+      clearInterval(interval)
+      clearInterval(tickInterval)
+    }
   }, [])
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
-  }
-
   const latestEvent = events[0]
-
   if (!latestEvent) return null
 
-  const Icon = getEventIcon(latestEvent.type)
-  const colorClass = getEventColor(latestEvent.type)
+  const LatestIcon = getEventIcon(latestEvent.type)
+  const latestIconClass = getEventIconClass(latestEvent.type)
 
   return (
     <motion.div
@@ -100,31 +107,29 @@ export function EventLog() {
       transition={{ delay: 1, duration: 0.4 }}
       className="fixed bottom-4 right-4 z-50"
     >
-      <div className={`bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden transition-all duration-300 ${
-        expanded ? 'w-80' : 'w-72'
-      }`}>
-        {/* Header - Always visible */}
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden w-80">
+        {/* Header */}
         <button
           onClick={() => setExpanded(!expanded)}
-          className="w-full px-3 py-2.5 flex items-center justify-between hover:bg-gray-50 transition-colors"
+          className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
         >
           <div className="flex items-center gap-2">
-            <div className={`p-1.5 rounded-lg ${colorClass}`}>
-              <Activity className="w-3.5 h-3.5" />
+            <div className="relative">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full" />
+              <span className="absolute inset-0 w-2 h-2 bg-emerald-400 rounded-full animate-ping opacity-75" />
             </div>
-            <span className="text-xs font-semibold text-gray-700">Händelser</span>
+            <span className="text-sm font-medium text-gray-900">Händelser</span>
+            <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full">
+              {events.length}
+            </span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[10px] text-gray-400 tabular-nums">{formatTime(latestEvent.timestamp)}</span>
-            {expanded ? (
-              <ChevronDown className="w-4 h-4 text-gray-400" />
-            ) : (
-              <ChevronUp className="w-4 h-4 text-gray-400" />
-            )}
+            <span className="text-xs text-gray-400">{formatRelativeTime(latestEvent.timestamp)}</span>
+            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
           </div>
         </button>
 
-        {/* Latest Event - Always shown */}
+        {/* Latest Event - Always visible */}
         <AnimatePresence mode="wait">
           <motion.div
             key={latestEvent.id}
@@ -132,18 +137,18 @@ export function EventLog() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 10 }}
             transition={{ duration: 0.2 }}
-            className="px-3 pb-2.5 border-t border-gray-100"
+            className="px-4 py-3 border-t border-gray-50 flex items-start gap-3"
           >
-            <div className="flex items-start gap-2 pt-2">
-              <div className={`p-1 rounded ${colorClass} mt-0.5`}>
-                <Icon className="w-3 h-3" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-gray-600 leading-snug">
-                  {latestEvent.message}{' '}
-                  <span className="font-semibold text-gray-900">{latestEvent.company}</span>
-                </p>
-              </div>
+            <div className={`mt-0.5 w-8 h-8 rounded-lg flex items-center justify-center ${latestIconClass}`}>
+              <LatestIcon className="w-4 h-4" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-gray-900">
+                {latestEvent.message.replace(' för', '')}
+              </p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                <span className="font-medium">{latestEvent.company}</span>
+              </p>
             </div>
           </motion.div>
         </AnimatePresence>
@@ -158,30 +163,28 @@ export function EventLog() {
               transition={{ duration: 0.2 }}
               className="border-t border-gray-100 overflow-hidden"
             >
-              <div className="max-h-48 overflow-y-auto">
+              <div className="max-h-64 overflow-y-auto">
                 {events.slice(1).map((event, index) => {
                   const EventIcon = getEventIcon(event.type)
-                  const eventColor = getEventColor(event.type)
+                  const iconClass = getEventIconClass(event.type)
                   return (
                     <motion.div
                       key={event.id}
-                      initial={{ opacity: 0, y: -10 }}
+                      initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      className="px-3 py-2 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0"
+                      transition={{ delay: index * 0.03 }}
+                      className="px-4 py-2.5 flex items-start gap-3 hover:bg-gray-50 transition-colors"
                     >
-                      <div className="flex items-start gap-2">
-                        <div className={`p-1 rounded ${eventColor} mt-0.5 opacity-70`}>
-                          <EventIcon className="w-2.5 h-2.5" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[11px] text-gray-500 leading-snug">
-                            {event.message}{' '}
-                            <span className="font-medium text-gray-700">{event.company}</span>
-                          </p>
-                          <span className="text-[9px] text-gray-400 tabular-nums">
-                            {formatTime(event.timestamp)}
-                          </span>
+                      <div className={`mt-0.5 w-6 h-6 rounded-md flex items-center justify-center ${iconClass} opacity-80`}>
+                        <EventIcon className="w-3 h-3" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-gray-700">
+                          {event.message.replace(' för', '')}
+                        </p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-xs font-medium text-gray-900">{event.company}</span>
+                          <span className="text-[10px] text-gray-400">{formatRelativeTime(event.timestamp)}</span>
                         </div>
                       </div>
                     </motion.div>
@@ -191,14 +194,6 @@ export function EventLog() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* Subtle pulse indicator for new events */}
-        {!expanded && (
-          <div className="absolute top-2 right-12 w-2 h-2">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-loop-lime opacity-75 animate-ping" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-loop-lime" />
-          </div>
-        )}
       </div>
     </motion.div>
   )

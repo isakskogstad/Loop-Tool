@@ -106,16 +106,16 @@ function LoadingScreen() {
   )
 }
 
-// View Toggle Component
+// View Toggle Component - iOS Segmented Control Style
 function ViewToggle() {
   const { viewMode, setViewMode } = useMapContext()
 
   return (
-    <div className="flex justify-center py-4 bg-gray-50 border-t border-gray-200">
-      <div className="inline-flex items-center bg-white rounded-2xl p-1.5 shadow-lg border border-gray-200">
+    <div className="flex justify-center py-3 bg-gray-50/50 border-t border-gray-100">
+      <div className="inline-flex items-center bg-gray-100 rounded-lg p-1">
         <button
           onClick={() => setViewMode('map')}
-          className={`relative flex items-center gap-3 px-8 py-3.5 rounded-xl text-base font-semibold transition-all duration-300 ${
+          className={`relative flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
             viewMode === 'map'
               ? 'text-gray-900'
               : 'text-gray-500 hover:text-gray-700'
@@ -124,18 +124,18 @@ function ViewToggle() {
           {viewMode === 'map' && (
             <motion.div
               layoutId="viewToggleBackground"
-              className="absolute inset-0 bg-loop-lime rounded-xl shadow-md"
+              className="absolute inset-0 bg-white rounded-md shadow-sm"
               initial={false}
               transition={{ type: 'spring', stiffness: 500, damping: 35 }}
             />
           )}
-          <Map className="w-5 h-5 relative z-10" />
+          <Map className="w-4 h-4 relative z-10" />
           <span className="relative z-10">Karta</span>
         </button>
 
         <button
           onClick={() => setViewMode('table')}
-          className={`relative flex items-center gap-3 px-8 py-3.5 rounded-xl text-base font-semibold transition-all duration-300 ${
+          className={`relative flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
             viewMode === 'table'
               ? 'text-gray-900'
               : 'text-gray-500 hover:text-gray-700'
@@ -144,12 +144,12 @@ function ViewToggle() {
           {viewMode === 'table' && (
             <motion.div
               layoutId="viewToggleBackground"
-              className="absolute inset-0 bg-loop-lime rounded-xl shadow-md"
+              className="absolute inset-0 bg-white rounded-md shadow-sm"
               initial={false}
               transition={{ type: 'spring', stiffness: 500, damping: 35 }}
             />
           )}
-          <Table2 className="w-5 h-5 relative z-10" />
+          <Table2 className="w-4 h-4 relative z-10" />
           <span className="relative z-10">Tabell</span>
         </button>
       </div>
