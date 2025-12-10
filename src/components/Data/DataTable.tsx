@@ -10,6 +10,28 @@ interface DataTableProps {
 type SortField = 'name' | 'sector' | 'turnover' | 'growth' | 'funding' | 'valuation' | 'city' | 'ceo' | 'employees'
 type SortDirection = 'asc' | 'desc' | null
 
+// Color palette for generated logos - same as CompanyModal
+const LOGO_COLORS = [
+  { bg: '#E8F5E9', text: '#2E7D32' }, // Green
+  { bg: '#E3F2FD', text: '#1565C0' }, // Blue
+  { bg: '#FFF3E0', text: '#EF6C00' }, // Orange
+  { bg: '#F3E5F5', text: '#7B1FA2' }, // Purple
+  { bg: '#FFEBEE', text: '#C62828' }, // Red
+  { bg: '#E0F7FA', text: '#00838F' }, // Cyan
+  { bg: '#FFF8E1', text: '#F9A825' }, // Amber
+  { bg: '#F1F8E9', text: '#558B2F' }, // Light Green
+  { bg: '#FCE4EC', text: '#AD1457' }, // Pink
+  { bg: '#ECEFF1', text: '#455A64' }, // Blue Grey
+]
+
+function getLogoColor(name: string) {
+  let hash = 0
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  return LOGO_COLORS[Math.abs(hash) % LOGO_COLORS.length]
+}
+
 function formatCurrency(value: number | null): string {
   if (!value) return '-'
   if (value >= 1_000_000_000) {
@@ -188,7 +210,13 @@ export function DataTable({ companies }: DataTableProps) {
                         className="w-8 h-8 rounded-lg object-contain bg-gray-100 p-1"
                       />
                     ) : (
-                      <div className="w-8 h-8 rounded-lg bg-loop-lime/20 flex items-center justify-center text-loop-black font-semibold text-sm">
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center font-semibold text-sm"
+                        style={{
+                          backgroundColor: getLogoColor(company.name).bg,
+                          color: getLogoColor(company.name).text
+                        }}
+                      >
                         {company.name.charAt(0)}
                       </div>
                     )}

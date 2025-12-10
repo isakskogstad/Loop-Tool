@@ -6,6 +6,19 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 // Types
+export interface Owner {
+  name: string
+  type: string | null
+  percent: number | null
+}
+
+export interface Trademark {
+  name: string
+  type: string | null
+  status: string | null
+  registrationDate: string | null
+}
+
 export interface CompanyWithCoords {
   orgnr: string
   name: string
@@ -16,19 +29,40 @@ export interface CompanyWithCoords {
   logo_url: string | null
   website: string | null
   sector: string | null
+  // Financials 2024
   turnover_2024_sek: number | null
-  turnover_2023_sek: number | null
   ebit_2024_sek: number | null
+  // Financials 2023
+  turnover_2023_sek: number | null
   ebit_2023_sek: number | null
+  // Funding
   total_funding_sek: number | null
+  latest_funding_round_sek: number | null
+  latest_funding_date: string | null
   latest_valuation_sek: number | null
+  // Growth
   growth_2023_2024_percent: number | null
+  // Company info
   foundation_date: string | null
+  investment_status: string | null
+  purpose: string | null
+  // People
   ceo_name: string | null
   chairman_name: string | null
   board_members: string[]
   num_employees: number | null
-  investment_status: string | null
+  // Owners
+  owners: Owner[]
+  largest_owners_text: string | null
+  // Trademarks
+  trademarks: Trademark[]
+  // Annual report
+  annual_report_year: number | null
+  // Social links
+  linkedin_url: string | null
+  // Address
+  address: string | null
+  postal_code: string | null
 }
 
 export interface Role {
@@ -51,13 +85,16 @@ export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
       city,
       foundation_date,
       total_funding_sek,
+      latest_funding_round_sek,
+      latest_funding_date,
       latest_valuation_sek,
       turnover_2024_sek,
       turnover_2023_sek,
       ebit_2024_sek,
       ebit_2023_sek,
       growth_2023_2024_percent,
-      investment_status
+      investment_status,
+      largest_owners
     `)
     .order('turnover_2024_sek', { ascending: false, nullsFirst: false })
 
@@ -78,7 +115,12 @@ export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
       county,
       logo_url,
       website,
-      num_employees
+      num_employees,
+      purpose,
+      linkedin_url,
+      address,
+      postal_code,
+      postal_city
     `)
 
   console.log('Companies query result:', { count: companiesData?.length, error: companiesError })
@@ -88,7 +130,7 @@ export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
     throw companiesError
   }
 
-  // 3. Fetch roles (VD, ordförande, styrelseledamöter)
+  // 3. Fetch roles (VD, ordforande, styrelseledamoter)
   const { data: rolesData, error: rolesError } = await supabase
     .from('roles')
     .select(`
@@ -102,8 +144,45 @@ export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
 
   if (rolesError) {
     console.error('Roles query error:', rolesError)
-    // Don't throw - roles are optional
   }
+
+  // 4. Fetch owners from loop_owners
+  const { data: ownersData, error: ownersError } = await supabase
+    .from('loop_owners')
+    .select(`
+      orgnr,
+      owner_name,
+      owner_type,
+      ownership_percent
+    `)
+    .eq('is_current', true)
+    .order('ownership_percent', { ascending: false, nullsFirst: false })
+
+  console.log('Owners query result:', { count: ownersData?.length, error: ownersError })
+
+  // 5. Fetch trademarks
+  const { data: trademarksData, error: trademarksError } = await supabase
+    .from('trademarks')
+    .select(`
+      company_orgnr,
+      trademark_name,
+      trademark_type,
+      status,
+      registration_date
+    `)
+
+  console.log('Trademarks query result:', { count: trademarksData?.length, error: trademarksError })
+
+  // 6. Fetch latest annual reports
+  const { data: reportsData, error: reportsError } = await supabase
+    .from('annual_reports')
+    .select(`
+      company_orgnr,
+      fiscal_year
+    `)
+    .order('fiscal_year', { ascending: false })
+
+  console.log('Annual reports query result:', { count: reportsData?.length, error: reportsError })
 
   // Create lookup maps
   const companiesMap = new Map(companiesData?.map(c => [c.orgnr, c]) || [])
@@ -116,10 +195,48 @@ export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
     rolesMap.set(role.company_orgnr, existing)
   })
 
+  // Group owners by company (top 5)
+  const ownersMap = new Map<string, Owner[]>()
+  ownersData?.forEach(owner => {
+    const existing = ownersMap.get(owner.orgnr) || []
+    if (existing.length < 5) {
+      existing.push({
+        name: owner.owner_name,
+        type: owner.owner_type,
+        percent: owner.ownership_percent
+      })
+    }
+    ownersMap.set(owner.orgnr, existing)
+  })
+
+  // Group trademarks by company
+  const trademarksMap = new Map<string, Trademark[]>()
+  trademarksData?.forEach(tm => {
+    const existing = trademarksMap.get(tm.company_orgnr) || []
+    existing.push({
+      name: tm.trademark_name || '',
+      type: tm.trademark_type,
+      status: tm.status,
+      registrationDate: tm.registration_date
+    })
+    trademarksMap.set(tm.company_orgnr, existing)
+  })
+
+  // Get latest annual report year per company
+  const reportsMap = new Map<string, number>()
+  reportsData?.forEach(report => {
+    if (!reportsMap.has(report.company_orgnr)) {
+      reportsMap.set(report.company_orgnr, report.fiscal_year)
+    }
+  })
+
   // Merge all data
   const result = (loopData || []).map(company => {
     const companyInfo = companiesMap.get(company.orgnr)
     const roles = rolesMap.get(company.orgnr) || []
+    const owners = ownersMap.get(company.orgnr) || []
+    const trademarks = trademarksMap.get(company.orgnr) || []
+    const annualReportYear = reportsMap.get(company.orgnr) || null
 
     // Find VD
     const vd = roles.find(r =>
@@ -134,7 +251,7 @@ export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
     const boardMembers = roles
       .filter(r => r.role_type === 'Ledamot')
       .map(r => r.name)
-      .slice(0, 5) // Max 5 board members
+      .slice(0, 5)
 
     // Parse coordinates
     const lat = companyInfo?.latitude
@@ -154,19 +271,40 @@ export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
       logo_url: companyInfo?.logo_url || null,
       website: companyInfo?.website || null,
       sector: company.sector,
+      // Financials 2024
       turnover_2024_sek: company.turnover_2024_sek,
-      turnover_2023_sek: company.turnover_2023_sek,
       ebit_2024_sek: company.ebit_2024_sek,
+      // Financials 2023
+      turnover_2023_sek: company.turnover_2023_sek,
       ebit_2023_sek: company.ebit_2023_sek,
+      // Funding
       total_funding_sek: company.total_funding_sek,
+      latest_funding_round_sek: company.latest_funding_round_sek,
+      latest_funding_date: company.latest_funding_date,
       latest_valuation_sek: company.latest_valuation_sek,
+      // Growth
       growth_2023_2024_percent: company.growth_2023_2024_percent,
+      // Company info
       foundation_date: company.foundation_date,
+      investment_status: company.investment_status,
+      purpose: companyInfo?.purpose || null,
+      // People
       ceo_name: vd?.name || null,
       chairman_name: chairman?.name || null,
       board_members: boardMembers,
       num_employees: companyInfo?.num_employees || null,
-      investment_status: company.investment_status,
+      // Owners
+      owners: owners,
+      largest_owners_text: company.largest_owners,
+      // Trademarks
+      trademarks: trademarks,
+      // Annual report
+      annual_report_year: annualReportYear,
+      // Social links
+      linkedin_url: companyInfo?.linkedin_url || null,
+      // Address
+      address: companyInfo?.address || null,
+      postal_code: companyInfo?.postal_code || null,
     }
   })
 
@@ -207,4 +345,18 @@ export async function fetchSectorDistribution() {
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 10)
+}
+
+// Get last sync time for status display
+export async function fetchLastSyncTime(): Promise<Date | null> {
+  const { data, error } = await supabase
+    .from('poit_sync_stats')
+    .select('sync_completed_at')
+    .eq('status', 'completed')
+    .order('sync_completed_at', { ascending: false })
+    .limit(1)
+    .single()
+
+  if (error || !data) return null
+  return new Date(data.sync_completed_at)
 }

@@ -1,7 +1,7 @@
 import { MapProvider, useMapContext } from './context/MapContext'
 import { MapView } from './components/Map/MapContainer'
 import { DataTable } from './components/Data/DataTable'
-import { CompanyPanel } from './components/Company/CompanyPanel'
+import { CompanyModal } from './components/Company/CompanyModal'
 import { Header } from './components/Layout/Header'
 import { Footer } from './components/Layout/Footer'
 import { StatsBar } from './components/Stats/StatsBar'
@@ -114,7 +114,9 @@ function MapApp() {
       <div className="fixed inset-0 flex items-center justify-center bg-gray-100">
         <div className="text-center p-6">
           <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl">⚠️</span>
+            <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
           </div>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">Något gick fel</h2>
           <p className="text-sm text-gray-500 mb-4">{error.message}</p>
@@ -183,8 +185,8 @@ function MapApp() {
           <Footer />
         </motion.div>
 
-        {/* Company Detail Panel */}
-        <CompanyPanel />
+        {/* Company Detail Modal */}
+        <CompanyModal />
       </div>
     </>
   )
