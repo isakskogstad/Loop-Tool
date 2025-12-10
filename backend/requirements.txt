@@ -1,0 +1,42 @@
+# Swedish Company Data API v3
+# Dependencies
+
+# Web framework
+fastapi>=0.104.0
+uvicorn>=0.24.0
+pydantic>=2.0.0
+slowapi>=0.1.9              # Rate limiting
+
+# HTTP clients
+requests>=2.31.0
+httpx>=0.25.0              # Async HTTP client
+
+# HTML parsing
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Structured logging
+structlog>=23.0.0
+
+# Database (Supabase PostgreSQL)
+supabase>=2.0.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+
+# Markdown rendering
+markdown>=3.5.0            # Markdown to HTML
+
+# Email
+resend>=0.8.0              # Transactional email
+
+# Development
+python-dotenv>=1.0.0       # Environment variables
+
+# Browser automation (for POIT scraper)
+# Note: These are optional - only needed for local POIT sync jobs
+# On servers without Chrome, use pre-synced data from database
+selenium>=4.15.0
+undetected-chromedriver>=3.5.0

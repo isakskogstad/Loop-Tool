@@ -1,0 +1,188 @@
+{
+  "companies_tested": 10,
+  "documents_found": 17,
+  "documents_downloaded": 4,
+  "total_size_mb": 2.880807876586914,
+  "companies": [
+    {
+      "orgnr": "5566599766",
+      "name": "Calliditas Therapeutics AB",
+      "documents": []
+    },
+    {
+      "orgnr": "5568022171",
+      "name": "BONESUPPORT HOLDING AB",
+      "documents": [
+        {
+          "type": "\u00c5rsredovisning",
+          "year": "2022",
+          "document_id": "74a0001f-a289-400a-ad9e-ba53933a3891_paket",
+          "file_format": "application/zip",
+          "period_end": "2022-12-31",
+          "registration_date": "2023-06-12"
+        }
+      ]
+    },
+    {
+      "orgnr": "5567424188",
+      "name": "Graleo AB",
+      "documents": []
+    },
+    {
+      "orgnr": "5567313126",
+      "name": "Bambuser AB",
+      "documents": []
+    },
+    {
+      "orgnr": "5569228207",
+      "name": "Ninous Papyrum Lingua AB",
+      "documents": []
+    },
+    {
+      "orgnr": "5590542543",
+      "name": "Goodbye Kansas Infinite AB",
+      "documents": []
+    },
+    {
+      "orgnr": "5567634695",
+      "name": "Scila AB",
+      "documents": []
+    },
+    {
+      "orgnr": "5590179924",
+      "name": "SecTrade Konsult AB",
+      "documents": [
+        {
+          "type": "\u00c5rsredovisning",
+          "year": "2020",
+          "document_id": "4eaa2201-7ad0-4de4-9b2d-1f5f952b74d9_paket",
+          "file_format": "application/zip",
+          "period_end": "2020-10-31",
+          "registration_date": "2020-12-21"
+        }
+      ]
+    },
+    {
+      "orgnr": "5569914046",
+      "name": "Podspace AB",
+      "documents": [
+        {
+          "type": "\u00c5rsredovisning",
+          "year": "2019",
+          "document_id": "1f7deaa4-0bef-4731-8d8b-40a0ed1dc356_paket",
+          "file_format": "application/zip",
+          "period_end": "2019-12-31",
+          "registration_date": "2020-06-25"
+        }
+      ]
+    },
+    {
+      "orgnr": "5569201998",
+      "name": "Modular Finance AB",
+      "documents": [
+        {
+          "type": "\u00c5rsredovisning",
+          "year": "2021",
+          "document_id": "7ebc341f-bd7c-4d8a-9895-cfa3938feff0_paket",
+          "file_format": "application/zip",
+          "period_end": "2021-12-31",
+          "registration_date": "2022-03-09"
+        }
+      ]
+    }
+  ],
+  "download_failures": [],
+  "pdf_analyses": [
+    {
+      "file_name": "5568022171_BONESUPPORT_HOLDING_AB_2022.zip",
+      "file_size_kb": 2791.33984375,
+      "file_size_mb": 2.7259178161621094,
+      "format": "iXBRL",
+      "xhtml_files": [
+        "c17609c9-2561-49c6-b867-565f34c661da.xhtml"
+      ],
+      "nested_zips": [
+        "19956416-3bc1-4ab7-ad81-d54f68835a60.zip"
+      ],
+      "xbrl_facts_found": 20,
+      "company_name": null,
+      "org_number": null,
+      "period_end": null,
+      "has_balance_sheet": false,
+      "has_income_statement": false,
+      "has_cash_flow": false,
+      "sample_numeric_values": [],
+      "is_pdf": false
+    },
+    {
+      "file_name": "5590179924_SecTrade_Konsult_AB_2020.zip",
+      "file_size_kb": 9.142578125,
+      "file_size_mb": 0.008928298950195312,
+      "format": "iXBRL",
+      "xhtml_files": [
+        "4eaa2201-7ad0-4de4-9b2d-1f5f952b74d9.xhtml"
+      ],
+      "nested_zips": [],
+      "xbrl_facts_found": 193,
+      "company_name": null,
+      "org_number": null,
+      "period_end": null,
+      "has_balance_sheet": false,
+      "has_income_statement": false,
+      "has_cash_flow": false,
+      "sample_numeric_values": [
+        "2 829",
+        "2 445",
+        "2 082",
+        "2 247",
+        "2 029"
+      ],
+      "is_pdf": false
+    },
+    {
+      "file_name": "5569914046_Podspace_AB_2019.zip",
+      "file_size_kb": 9.9111328125,
+      "file_size_mb": 0.009678840637207031,
+      "format": "iXBRL",
+      "xhtml_files": [
+        "1f7deaa4-0bef-4731-8d8b-40a0ed1dc356.xhtml"
+      ],
+      "nested_zips": [],
+      "xbrl_facts_found": 235,
+      "company_name": null,
+      "org_number": null,
+      "period_end": null,
+      "has_balance_sheet": false,
+      "has_income_statement": false,
+      "has_cash_flow": false,
+      "sample_numeric_values": [
+        "2 919",
+        "3 189",
+        "5 200",
+        "3 348",
+        "237"
+      ],
+      "is_pdf": false
+    },
+    {
+      "file_name": "5569201998_Modular_Finance_AB_2021.zip",
+      "file_size_kb": 139.5537109375,
+      "file_size_mb": 0.13628292083740234,
+      "format": "iXBRL",
+      "xhtml_files": [
+        "7ebc341f-bd7c-4d8a-9895-cfa3938feff0.xhtml",
+        "5f07d34f-a4b6-42f1-bd25-473548177103.xhtml"
+      ],
+      "nested_zips": [],
+      "xbrl_facts_found": 247,
+      "company_name": null,
+      "org_number": null,
+      "period_end": null,
+      "has_balance_sheet": false,
+      "has_income_statement": false,
+      "has_cash_flow": false,
+      "sample_numeric_values": [],
+      "is_pdf": false
+    }
+  ]
+}

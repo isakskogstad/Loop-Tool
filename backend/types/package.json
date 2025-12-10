@@ -1,0 +1,71 @@
+{
+  "name": "@loop-auto/api-types",
+  "version": "1.0.0",
+  "description": "TypeScript types and API client for Loop-Auto Swedish Company Data API",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./xbrl": {
+      "import": "./dist/xbrl.js",
+      "types": "./dist/xbrl.d.ts"
+    },
+    "./client": {
+      "import": "./dist/api-client.js",
+      "types": "./dist/api-client.d.ts"
+    },
+    "./nyemissioner": {
+      "import": "./dist/nyemissioner-client.js",
+      "types": "./dist/nyemissioner-client.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build",
+    "typecheck": "tsc --noEmit",
+    "examples": "npx tsx examples.ts"
+  },
+  "keywords": [
+    "swedish-companies",
+    "xbrl",
+    "financial-data",
+    "bolagsverket",
+    "typescript",
+    "api-client",
+    "loop-auto"
+  ],
+  "author": "Loop Auto",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.6.2",
+    "typescript": "^5.3.2"
+  },
+  "peerDependencies": {
+    "zod": "^3.22.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/isakskogstad/loop-auto"
+  },
+  "bugs": {
+    "url": "https://github.com/isakskogstad/loop-auto/issues"
+  },
+  "homepage": "https://loop-auto-api.onrender.com/docs"
+}

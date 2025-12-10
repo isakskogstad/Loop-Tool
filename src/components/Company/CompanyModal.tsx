@@ -259,6 +259,32 @@ export function CompanyModal() {
                 </Section>
               )}
 
+              {/* Investors */}
+              {company.investors && company.investors.length > 0 && (
+                <Section title={`Investerare (${company.investors.length})`} icon={<Users className="w-4 h-4" />}>
+                  <div className="space-y-2">
+                    {company.investors.map((investor, i) => (
+                      <div key={i} className="flex justify-between items-center py-1">
+                        <div className="min-w-0 flex-1">
+                          <span className="text-sm text-gray-700 block truncate">{investor.name}</span>
+                          {investor.type && (
+                            <span className="text-xs text-gray-400">{investor.type}</span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          {investor.isLeadInvestor && (
+                            <span className="text-[10px] px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded font-medium">Lead</span>
+                          )}
+                          {investor.investmentRound && (
+                            <span className="text-xs text-gray-500">{investor.investmentRound}</span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </Section>
+              )}
+
               {/* Annual Report */}
               {company.annual_report_year && (
                 <Section title="Arsredovisning" icon={<FileText className="w-4 h-4" />}>

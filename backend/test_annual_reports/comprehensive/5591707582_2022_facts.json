@@ -1,0 +1,1710 @@
+[
+  {
+    "name": "se-gen-base:Nettoomsattning",
+    "value": 601974.0,
+    "value_raw": "601 974",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Nettoomsattning",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Nettoomsattning",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "period2",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Rorelseresultat",
+    "value": 2647182.0,
+    "value_raw": "2 647 182",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Rorelseresultat",
+    "value": 1667324.0,
+    "value_raw": "1 667 324",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Rorelseresultat",
+    "value": 689928.0,
+    "value_raw": "689 928",
+    "context": "period2",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ResultatEfterFinansiellaPoster",
+    "value": 2671611.0,
+    "value_raw": "2 671 611",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ResultatEfterFinansiellaPoster",
+    "value": 1652722.0,
+    "value_raw": "1 652 722",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ResultatEfterFinansiellaPoster",
+    "value": 686348.0,
+    "value_raw": "686 348",
+    "context": "period2",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AvkastningEgetKapital",
+    "value": 0.512,
+    "value_raw": "51,2",
+    "context": "period0",
+    "unit": "procent"
+  },
+  {
+    "name": "se-gen-base:AvkastningEgetKapital",
+    "value": 0.281,
+    "value_raw": "28,1",
+    "context": "period1",
+    "unit": "procent"
+  },
+  {
+    "name": "se-gen-base:AvkastningEgetKapital",
+    "value": 0.091,
+    "value_raw": "9,1",
+    "context": "period2",
+    "unit": "procent"
+  },
+  {
+    "name": "se-gen-base:Tillgangar",
+    "value": 6398659.0,
+    "value_raw": "6 398 659",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Tillgangar",
+    "value": 6100910.0,
+    "value_raw": "6 100 910",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Tillgangar",
+    "value": 7591341.0,
+    "value_raw": "7 591 341",
+    "context": "balans2",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Kassalikviditet",
+    "value": 9.941,
+    "value_raw": "994,1",
+    "context": "balans0",
+    "unit": "procent"
+  },
+  {
+    "name": "se-gen-base:Kassalikviditet",
+    "value": 16.202,
+    "value_raw": "1620,2",
+    "context": "balans1",
+    "unit": "procent"
+  },
+  {
+    "name": "se-gen-base:Kassalikviditet",
+    "value": 83.54100000000001,
+    "value_raw": "8354,1",
+    "context": "balans2",
+    "unit": "procent"
+  },
+  {
+    "name": "se-gen-base:Soliditet",
+    "value": 0.8150000000000001,
+    "value_raw": "81,5",
+    "context": "balans0",
+    "unit": "procent"
+  },
+  {
+    "name": "se-gen-base:Soliditet",
+    "value": 0.965,
+    "value_raw": "96,5",
+    "context": "balans1",
+    "unit": "procent"
+  },
+  {
+    "name": "se-gen-base:Soliditet",
+    "value": 0.988,
+    "value_raw": "98,8",
+    "context": "balans2",
+    "unit": "procent"
+  },
+  {
+    "name": "se-gen-base:MedelantaletAnstallda",
+    "value": 7.0,
+    "value_raw": "7",
+    "context": "period0",
+    "unit": "antal-personer"
+  },
+  {
+    "name": "se-gen-base:MedelantaletAnstallda",
+    "value": 5.0,
+    "value_raw": "5",
+    "context": "period1",
+    "unit": "antal-personer"
+  },
+  {
+    "name": "se-gen-base:MedelantaletAnstallda",
+    "value": 1.0,
+    "value_raw": "1",
+    "context": "period2",
+    "unit": "antal-personer"
+  },
+  {
+    "name": "se-gen-base:Aktiekapital",
+    "value": 50000.0,
+    "value_raw": "50 000",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseratResultat",
+    "value": 7488713.0,
+    "value_raw": "7 488 713",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ForandringEgetKapitalBalanseratResultatBalanserasNyRakning",
+    "value": 1652722.0,
+    "value_raw": "1 652 722",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ForandringEgetKapitalEjRegistreratAktiekapitalNyemission",
+    "value": 1858.0,
+    "value_raw": "1 858",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ForandringEgetKapitalOverkursfondNyemission",
+    "value": 1998521.0,
+    "value_raw": "1 998 521",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Aktiekapital",
+    "value": 50000.0,
+    "value_raw": "50 000",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:EjRegistreratAktiekapital",
+    "value": 1858.0,
+    "value_raw": "1 858",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Overkursfond",
+    "value": 1998521.0,
+    "value_raw": "1 998 521",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseratResultat",
+    "value": 5835991.0,
+    "value_raw": "5 835 991",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AretsResultatEgetKapital",
+    "value": 1652722.0,
+    "value_raw": "1 652 722",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ForandringEgetKapitalAretsResultatBalanserasNyRakning",
+    "value": 1652722.0,
+    "value_raw": "1 652 722",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ForandringEgetKapitalAretsResultatAretsResultat",
+    "value": 2671611.0,
+    "value_raw": "2 671 611",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AretsResultatEgetKapital",
+    "value": 2671611.0,
+    "value_raw": "2 671 611",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Overkursfond",
+    "value": 1998521.0,
+    "value_raw": "1 998 521",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseratResultat",
+    "value": 5835991.0,
+    "value_raw": "5 835 991",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AretsResultatEgetKapital",
+    "value": 2671611.0,
+    "value_raw": "2 671 611",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:FrittEgetKapital",
+    "value": 5162901.0,
+    "value_raw": "5 162 901",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ForslagDispositionUtdelning",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ForslagDispositionBalanserasINyRakning",
+    "value": 5162901.0,
+    "value_raw": "5 162 901",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ForslagDisposition",
+    "value": 5162901.0,
+    "value_raw": "5 162 901",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Nettoomsattning",
+    "value": 601974.0,
+    "value_raw": "601 974",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Nettoomsattning",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AktiveratArbeteEgenRakning",
+    "value": 2592592.0,
+    "value_raw": "2 592 592",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AktiveratArbeteEgenRakning",
+    "value": 2146858.0,
+    "value_raw": "2 146 858",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:OvrigaRorelseintakter",
+    "value": 6270.0,
+    "value_raw": "6 270",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:OvrigaRorelseintakter",
+    "value": 22865.0,
+    "value_raw": "22 865",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:RorelseintakterLagerforandringarMm",
+    "value": 3200836.0,
+    "value_raw": "3 200 836",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:RorelseintakterLagerforandringarMm",
+    "value": 2169723.0,
+    "value_raw": "2 169 723",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:OvrigaExternaKostnader",
+    "value": 1139496.0,
+    "value_raw": "1 139 496",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:OvrigaExternaKostnader",
+    "value": 832185.0,
+    "value_raw": "832 185",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Personalkostnader",
+    "value": 3975600.0,
+    "value_raw": "3 975 600",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Personalkostnader",
+    "value": 2915844.0,
+    "value_raw": "2 915 844",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AvskrivningarNedskrivningarMateriellaImmateriellaAnlaggningstillgangar",
+    "value": 729622.0,
+    "value_raw": "729 622",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AvskrivningarNedskrivningarMateriellaImmateriellaAnlaggningstillgangar",
+    "value": 89018.0,
+    "value_raw": "89 018",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:OvrigaRorelsekostnader",
+    "value": 3300.0,
+    "value_raw": "3 300",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:OvrigaRorelsekostnader",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Rorelsekostnader",
+    "value": 5848018.0,
+    "value_raw": "5 848 018",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Rorelsekostnader",
+    "value": 3837047.0,
+    "value_raw": "3 837 047",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Rorelseresultat",
+    "value": 2647182.0,
+    "value_raw": "2 647 182",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Rorelseresultat",
+    "value": 1667324.0,
+    "value_raw": "1 667 324",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:OvrigaRanteintakterLiknandeResultatposterInklNedskrivning",
+    "value": 11896.0,
+    "value_raw": "11 896",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:OvrigaRanteintakterLiknandeResultatposterInklNedskrivning",
+    "value": 14602.0,
+    "value_raw": "14 602",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:RantekostnaderLiknandeResultatposter",
+    "value": 36325.0,
+    "value_raw": "36 325",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:RantekostnaderLiknandeResultatposter",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:FinansiellaPoster",
+    "value": 24429.0,
+    "value_raw": "24 429",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:FinansiellaPoster",
+    "value": 14602.0,
+    "value_raw": "14 602",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ResultatEfterFinansiellaPoster",
+    "value": 2671611.0,
+    "value_raw": "2 671 611",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ResultatEfterFinansiellaPoster",
+    "value": 1652722.0,
+    "value_raw": "1 652 722",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ResultatForeSkatt",
+    "value": 2671611.0,
+    "value_raw": "2 671 611",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ResultatForeSkatt",
+    "value": 1652722.0,
+    "value_raw": "1 652 722",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AretsResultat",
+    "value": 2671611.0,
+    "value_raw": "2 671 611",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AretsResultat",
+    "value": 1652722.0,
+    "value_raw": "1 652 722",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseradeUtgifterUtvecklingsarbetenLiknandeArbeten",
+    "value": 4353979.0,
+    "value_raw": "4 353 979",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseradeUtgifterUtvecklingsarbetenLiknandeArbeten",
+    "value": 2316858.0,
+    "value_raw": "2 316 858",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ImmateriellaAnlaggningstillgangar",
+    "value": 4353979.0,
+    "value_raw": "4 353 979",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ImmateriellaAnlaggningstillgangar",
+    "value": 2316858.0,
+    "value_raw": "2 316 858",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:InventarierVerktygInstallationer",
+    "value": 210441.0,
+    "value_raw": "210 441",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:InventarierVerktygInstallationer",
+    "value": 295892.0,
+    "value_raw": "295 892",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:MateriellaAnlaggningstillgangar",
+    "value": 210441.0,
+    "value_raw": "210 441",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:MateriellaAnlaggningstillgangar",
+    "value": 295892.0,
+    "value_raw": "295 892",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AndraLangfristigaFordringar",
+    "value": 6125.0,
+    "value_raw": "6 125",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AndraLangfristigaFordringar",
+    "value": 6125.0,
+    "value_raw": "6 125",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:FinansiellaAnlaggningstillgangar",
+    "value": 6125.0,
+    "value_raw": "6 125",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:FinansiellaAnlaggningstillgangar",
+    "value": 6125.0,
+    "value_raw": "6 125",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Anlaggningstillgangar",
+    "value": 4570545.0,
+    "value_raw": "4 570 545",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Anlaggningstillgangar",
+    "value": 2618875.0,
+    "value_raw": "2 618 875",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Kundfordringar",
+    "value": 144063.0,
+    "value_raw": "144 063",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Kundfordringar",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:OvrigaFordringarKortfristiga",
+    "value": 45347.0,
+    "value_raw": "45 347",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:OvrigaFordringarKortfristiga",
+    "value": 66133.0,
+    "value_raw": "66 133",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ForutbetaldaKostnaderUpplupnaIntakter",
+    "value": 157105.0,
+    "value_raw": "157 105",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:ForutbetaldaKostnaderUpplupnaIntakter",
+    "value": 122299.0,
+    "value_raw": "122 299",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:KortfristigaFordringar",
+    "value": 346515.0,
+    "value_raw": "346 515",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:KortfristigaFordringar",
+    "value": 188432.0,
+    "value_raw": "188 432",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:KassaBankExklRedovisningsmedel",
+    "value": 1481599.0,
+    "value_raw": "1 481 599",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:KassaBankExklRedovisningsmedel",
+    "value": 3293603.0,
+    "value_raw": "3 293 603",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:KassaBank",
+    "value": 1481599.0,
+    "value_raw": "1 481 599",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:KassaBank",
+    "value": 3293603.0,
+    "value_raw": "3 293 603",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Omsattningstillgangar",
+    "value": 1828114.0,
+    "value_raw": "1 828 114",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Omsattningstillgangar",
+    "value": 3482035.0,
+    "value_raw": "3 482 035",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Tillgangar",
+    "value": 6398659.0,
+    "value_raw": "6 398 659",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Tillgangar",
+    "value": 6100910.0,
+    "value_raw": "6 100 910",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Aktiekapital",
+    "value": 50000.0,
+    "value_raw": "50 000",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Aktiekapital",
+    "value": 50000.0,
+    "value_raw": "50 000",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:EjRegistreratAktiekapital",
+    "value": 1858.0,
+    "value_raw": "1 858",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:EjRegistreratAktiekapital",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BundetEgetKapital",
+    "value": 51858.0,
+    "value_raw": "51 858",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BundetEgetKapital",
+    "value": 50000.0,
+    "value_raw": "50 000",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Overkursfond",
+    "value": 1998521.0,
+    "value_raw": "1 998 521",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Overkursfond",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseratResultat",
+    "value": 5835991.0,
+    "value_raw": "5 835 991",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseratResultat",
+    "value": 7488713.0,
+    "value_raw": "7 488 713",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AretsResultatEgetKapital",
+    "value": 2671611.0,
+    "value_raw": "2 671 611",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AretsResultatEgetKapital",
+    "value": 1652722.0,
+    "value_raw": "1 652 722",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:FrittEgetKapital",
+    "value": 5162901.0,
+    "value_raw": "5 162 901",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:FrittEgetKapital",
+    "value": 5835991.0,
+    "value_raw": "5 835 991",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:EgetKapital",
+    "value": 5214759.0,
+    "value_raw": "5 214 759",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:EgetKapital",
+    "value": 5885991.0,
+    "value_raw": "5 885 991",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:OvrigaLangfristigaSkulderKreditinstitut",
+    "value": 1000000.0,
+    "value_raw": "1 000 000",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:OvrigaLangfristigaSkulderKreditinstitut",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:LangfristigaSkulder",
+    "value": 1000000.0,
+    "value_raw": "1 000 000",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:LangfristigaSkulder",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Leverantorsskulder",
+    "value": 19380.0,
+    "value_raw": "19 380",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Leverantorsskulder",
+    "value": 32236.0,
+    "value_raw": "32 236",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:OvrigaKortfristigaSkulder",
+    "value": 149520.0,
+    "value_raw": "149 520",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:OvrigaKortfristigaSkulder",
+    "value": 67683.0,
+    "value_raw": "67 683",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:UpplupnaKostnaderForutbetaldaIntakter",
+    "value": 15000.0,
+    "value_raw": "15 000",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:UpplupnaKostnaderForutbetaldaIntakter",
+    "value": 115000.0,
+    "value_raw": "115 000",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:KortfristigaSkulder",
+    "value": 183900.0,
+    "value_raw": "183 900",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:KortfristigaSkulder",
+    "value": 214919.0,
+    "value_raw": "214 919",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:EgetKapitalSkulder",
+    "value": 6398659.0,
+    "value_raw": "6 398 659",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:EgetKapitalSkulder",
+    "value": 6100910.0,
+    "value_raw": "6 100 910",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:MedelantaletAnstalldaMan",
+    "value": 7.0,
+    "value_raw": "7",
+    "context": "period0",
+    "unit": "antal-personer"
+  },
+  {
+    "name": "se-gen-base:MedelantaletAnstalldaMan",
+    "value": 5.0,
+    "value_raw": "5",
+    "context": "period1",
+    "unit": "antal-personer"
+  },
+  {
+    "name": "se-gen-base:MedelantaletAnstalldaAndelMan",
+    "value": 1.0,
+    "value_raw": "100",
+    "context": "period0",
+    "unit": "procent"
+  },
+  {
+    "name": "se-gen-base:MedelantaletAnstalldaAndelMan",
+    "value": 1.0,
+    "value_raw": "100",
+    "context": "period1",
+    "unit": "procent"
+  },
+  {
+    "name": "se-gen-base:MedelantaletAnstallda",
+    "value": 7.0,
+    "value_raw": "7",
+    "context": "period0",
+    "unit": "antal-personer"
+  },
+  {
+    "name": "se-gen-base:MedelantaletAnstallda",
+    "value": 5.0,
+    "value_raw": "5",
+    "context": "period1",
+    "unit": "antal-personer"
+  },
+  {
+    "name": "se-gen-base:LonerAndraErsattningarStyrelseledamoterVerkstallandeDirektorMotsvarandeBefattningshavare",
+    "value": 830235.0,
+    "value_raw": "830 235",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:LonerAndraErsattningarStyrelseledamoterVerkstallandeDirektorMotsvarandeBefattningshavare",
+    "value": 713908.0,
+    "value_raw": "713 908",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:LonerAndraErsattningarOvrigaAnstallda",
+    "value": 3103766.0,
+    "value_raw": "3 103 766",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:LonerAndraErsattningarOvrigaAnstallda",
+    "value": 1760924.0,
+    "value_raw": "1 760 924",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:LonerAndraErsattningar",
+    "value": 3934001.0,
+    "value_raw": "3 934 001",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:LonerAndraErsattningar",
+    "value": 2474832.0,
+    "value_raw": "2 474 832",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:PensionskostnaderStyrelsenVerkstallandeDirektorenMotsvarandeBefattningshavare",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:PensionskostnaderStyrelsenVerkstallandeDirektorenMotsvarandeBefattningshavare",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:PensionskostnaderOvrigaAnstallda",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:PensionskostnaderOvrigaAnstallda",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Pensionskostnader",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:Pensionskostnader",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:OvrigaSocialaAvgifterEnligtLagAvtal",
+    "value": 552587.0,
+    "value_raw": "552 587",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:OvrigaSocialaAvgifterEnligtLagAvtal",
+    "value": 371223.0,
+    "value_raw": "371 223",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:SocialaKostnaderInklPensionskostnader",
+    "value": 552587.0,
+    "value_raw": "552 587",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:SocialaKostnaderInklPensionskostnader",
+    "value": 371223.0,
+    "value_raw": "371 223",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseradeUtgifterUtvecklingsarbetenLiknadeArbetenAnskaffningsvarden",
+    "value": 2316858.0,
+    "value_raw": "2 316 858",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseradeUtgifterUtvecklingsarbetenLiknadeArbetenForandringAnskaffningsvardenRorelseforvarv",
+    "value": 2592592.0,
+    "value_raw": "2 592 592",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseradeUtgifterUtvecklingsarbetenLiknadeArbetenForandringAnskaffningsvardenRorelseforvarv",
+    "value": 2146858.0,
+    "value_raw": "2 146 858",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseradeUtgifterUtvecklingsarbetenLiknadeArbetenForandringAnskaffningsvardenFusion",
+    "value": 88700.0,
+    "value_raw": "88 700",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseradeUtgifterUtvecklingsarbetenLiknadeArbetenForandringAnskaffningsvardenFusion",
+    "value": 170000.0,
+    "value_raw": "170 000",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseradeUtgifterUtvecklingsarbetenLiknadeArbetenAnskaffningsvarden",
+    "value": 4998150.0,
+    "value_raw": "4 998 150",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseradeUtgifterUtvecklingsarbetenLiknadeArbetenAnskaffningsvarden",
+    "value": 2316858.0,
+    "value_raw": "2 316 858",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseradeUtgifterUtvecklingsarbetenLiknadeArbetenForandringAvskrivningarAretsAvskrivningar",
+    "value": 644171.0,
+    "value_raw": "644 171",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseradeUtgifterUtvecklingsarbetenLiknadeArbetenForandringAvskrivningarAretsAvskrivningar",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseradeUtgifterUtvecklingsarbetenLiknadeArbetenAvskrivningar",
+    "value": 644171.0,
+    "value_raw": "644 171",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseradeUtgifterUtvecklingsarbetenLiknadeArbetenAvskrivningar",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseradeUtgifterUtvecklingsarbetenLiknandeArbeten",
+    "value": 4353979.0,
+    "value_raw": "4 353 979",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:BalanseradeUtgifterUtvecklingsarbetenLiknandeArbeten",
+    "value": 2316858.0,
+    "value_raw": "2 316 858",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:InventarierVerktygInstallationerAnskaffningsvarden",
+    "value": 438213.0,
+    "value_raw": "438 213",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:InventarierVerktygInstallationerAnskaffningsvarden",
+    "value": 230085.0,
+    "value_raw": "230 085",
+    "context": "balans2",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:InventarierVerktygInstallationerForandringAnskaffningsvardenInkop",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:InventarierVerktygInstallationerForandringAnskaffningsvardenInkop",
+    "value": 208128.0,
+    "value_raw": "208 128",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:InventarierVerktygInstallationerAnskaffningsvarden",
+    "value": 438213.0,
+    "value_raw": "438 213",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:InventarierVerktygInstallationerAnskaffningsvarden",
+    "value": 438213.0,
+    "value_raw": "438 213",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:InventarierVerktygInstallationerAvskrivningar",
+    "value": 142321.0,
+    "value_raw": "142 321",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:InventarierVerktygInstallationerAvskrivningar",
+    "value": 53303.0,
+    "value_raw": "53 303",
+    "context": "balans2",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:InventarierVerktygInstallationerForandringAvskrivningarAretsAvskrivningar",
+    "value": 85451.0,
+    "value_raw": "85 451",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:InventarierVerktygInstallationerForandringAvskrivningarAretsAvskrivningar",
+    "value": 89018.0,
+    "value_raw": "89 018",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:InventarierVerktygInstallationerAvskrivningar",
+    "value": 227772.0,
+    "value_raw": "227 772",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:InventarierVerktygInstallationerAvskrivningar",
+    "value": 142321.0,
+    "value_raw": "142 321",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:InventarierVerktygInstallationer",
+    "value": 210441.0,
+    "value_raw": "210 441",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:InventarierVerktygInstallationer",
+    "value": 295892.0,
+    "value_raw": "295 892",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AndraLangfristigaFordringarAnskaffningsvarden",
+    "value": 6125.0,
+    "value_raw": "6 125",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AndraLangfristigaFordringarAnskaffningsvarden",
+    "value": 12375.0,
+    "value_raw": "12 375",
+    "context": "balans2",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AndraLangfristigaFordringarForandringAnskaffningsvardenTillkommandeFordringar",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AndraLangfristigaFordringarForandringAnskaffningsvardenTillkommandeFordringar",
+    "value": 6125.0,
+    "value_raw": "6 125",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AndraLangfristigaFordringarForandringAnskaffningsvardenRegleradeFordringar",
+    "value": 0.0,
+    "value_raw": "0",
+    "context": "period0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AndraLangfristigaFordringarForandringAnskaffningsvardenRegleradeFordringar",
+    "value": 12375.0,
+    "value_raw": "12 375",
+    "context": "period1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AndraLangfristigaFordringarAnskaffningsvarden",
+    "value": 6125.0,
+    "value_raw": "6 125",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AndraLangfristigaFordringarAnskaffningsvarden",
+    "value": 6125.0,
+    "value_raw": "6 125",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AndraLangfristigaFordringar",
+    "value": 6125.0,
+    "value_raw": "6 125",
+    "context": "balans0",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-gen-base:AndraLangfristigaFordringar",
+    "value": 6125.0,
+    "value_raw": "6 125",
+    "context": "balans1",
+    "unit": "SEK"
+  },
+  {
+    "name": "se-cd-base:SprakHandlingUpprattadList",
+    "value": null,
+    "value_raw": "se-mem-base:SprakSvenskaMember",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-cd-base:LandForetagetsSateList",
+    "value": null,
+    "value_raw": "se-mem-base:LandSverigeMember",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-cd-base:RedovisningsvalutaHandlingList",
+    "value": null,
+    "value_raw": "se-mem-base:ValutaSvenskaKronorMember",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-cd-base:RakenskapsarForstaDag",
+    "value": null,
+    "value_raw": "2022-01-01",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-cd-base:RakenskapsarSistaDag",
+    "value": null,
+    "value_raw": "2022-12-31",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-misc-base:ArsredovisningEjTaggadInformation",
+    "value": null,
+    "value_raw": "false",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:FinansiellRapportList",
+    "value": null,
+    "value_raw": "se-mem-base:FinansiellRapportStyrelsenVerkstallandeDirektorenAvgerArsredovisningMember",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-cd-base:ForetagetsNamn",
+    "value": null,
+    "value_raw": "Sanctify Financial Technologies AB",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-cd-base:Organisationsnummer",
+    "value": null,
+    "value_raw": "559170-7582",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-comp-base:FaststallelseResultatBalansrakning",
+    "value": null,
+    "value_raw": "Jag intygar att resultaträkningen och balansräkningen har fastställts på årsstämma",
+    "context": "balans0",
+    "unit": ""
+  },
+  {
+    "name": "se-comp-base:Arsstamma",
+    "value": null,
+    "value_raw": "2023-06-30",
+    "context": "balans0",
+    "unit": ""
+  },
+  {
+    "name": "se-comp-base:ArsstammaResultatDispositionGodkannaStyrelsensForslag",
+    "value": null,
+    "value_raw": "Årsstämman beslöt att godkänna styrelsens förslag till vinstdisposition.",
+    "context": "balans0",
+    "unit": ""
+  },
+  {
+    "name": "se-comp-base:IntygandeOriginalInnehall",
+    "value": null,
+    "value_raw": "Jag intygar att innehållet i dessa elektroniska handlingar överensstämmer med originalen och att originalen undertecknats av samtliga personer som enligt lag ska underteckna dessa.",
+    "context": "balans0",
+    "unit": ""
+  },
+  {
+    "name": "se-comp-base:UnderskriftFaststallelseintygElektroniskt",
+    "value": null,
+    "value_raw": "Elektroniskt underskriven av",
+    "context": "balans0",
+    "unit": ""
+  },
+  {
+    "name": "se-comp-base:UnderskriftFaststallelseintygForetradareTilltalsnamn",
+    "value": null,
+    "value_raw": "Oscar",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-comp-base:UnderskriftFaststallelseintygForetradareEfternamn",
+    "value": null,
+    "value_raw": "Dahlblom",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-comp-base:UnderskriftFaststallelseintygForetradareForetradarroll",
+    "value": null,
+    "value_raw": "Styrelseledamot",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-comp-base:UnderskriftFastallelseintygDatum",
+    "value": null,
+    "value_raw": "2023-06-30",
+    "context": "balans0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:VerksamhetenArtInriktning",
+    "value": null,
+    "value_raw": "Sanctify Financial Technologies AB registrerades år 2018 och har sitt säte i Lund. Bolagets verksamhet är att bedriva utveckling, marknadsföring, licensiering och försäljning av datorbaserad teknik relaterad till finansiella marknader, ävensom bedriva därmed förenlig verksamhet.\n\nUtveckling av företagets teknologi har fortsatt under året. Första intäkterna har skett men fortsatt stort fokus på utveckling av teknologin.",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:Nyckeltalsdefinitioner",
+    "value": null,
+    "value_raw": "Rörelsemarginal\nRörelseresultat / Nettoomsättning.\n\nAvkastning på eget kapital\nResultat efter finansiella poster / Justerat eget kapital.\n\nBalansomslutning\nTotala tillgångar.\n\nKassalikviditet\n(Omsättningstillgångar - Varulager) / Kortfristiga skulder.\n\nSoliditet\n(Totalt eget kapital + (100 % -aktuell bolagsskattesats av obeskattade reserver)) / Totala tillgångar.",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-cd-base:MatEnhet",
+    "value": null,
+    "value_raw": "Belopp i kr om inget annat anges.",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:RedovisningsVarderingsprinciper",
+    "value": null,
+    "value_raw": "Årsredovisningen har upprättats i enlighet med årsredovisningslagen och Bokföringsnämndens allmänna råd BFNAR 2012:1 Årsredovisning och koncernredovisning (K3).\n\nTillgångar, avsättningar och skulder har värderats utifrån anskaffningsvärden om inget annat anges nedan.",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:RedovisningsprinciperAktiveringInterntUpparbetadeImmateriellaAnlaggningstillgangar",
+    "value": null,
+    "value_raw": "Årets aktiverade utvecklingskostnader uppgår till 2 681 292kr varav 88 700kr avser externa konsulter.",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:RedovisningsprinciperAvskrivningImmateriellaAnlaggningstillgangar",
+    "value": null,
+    "value_raw": "Immateriella anläggningstillgångar tas upp till deras anskaffningsvärde minskat med ackumulerade avskrivningar enligt plan och eventuella nedskrivningar.\n\nAvskrivning sker linjärt över tillgångens beräknade nyttjandeperiod. Följande nyttjandeperioder används:",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:AvskrivningsprincipImmateriellAnlaggningstillgangBenamning",
+    "value": null,
+    "value_raw": "Balanserade utgifter för utvecklingsarbeten och liknande arbeten",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:AvskrivningsprincipImmateriellAnlaggningstillgangNyttjandeperiod",
+    "value": null,
+    "value_raw": "5-8",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:RedovisningsprinciperAvskrivningMateriellaAnlaggningstillgangar",
+    "value": null,
+    "value_raw": "Materiella anläggningstillgångar redovisas till anskaffningsvärde minskat med ackumulerade avskrivningar enligt plan och eventuella nedskrivningar.\n\nAvskrivning sker linjärt över tillgångens beräknade nyttjandeperiod med hänsyn till väsentligt restvärde. Följande nyttjandeperioder används:",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:AvskrivningsprincipMateriellAnlaggningstillgangBenamning",
+    "value": null,
+    "value_raw": "Inventarier, verktyg och installationer",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:AvskrivningsprincipMateriellAnlaggningstillgangNyttjandeperiod",
+    "value": null,
+    "value_raw": "5",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UndertecknandeDatum",
+    "value": null,
+    "value_raw": "2023-06-29",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UnderskriftHandlingTilltalsnamn",
+    "value": null,
+    "value_raw": "Oscar",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UnderskriftHandlingEfternamn",
+    "value": null,
+    "value_raw": "Dahlblom",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UnderskriftHandlingRoll",
+    "value": null,
+    "value_raw": "Styrelseledamot",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UndertecknandeDatum",
+    "value": null,
+    "value_raw": "2023-06-30",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UnderskriftHandlingTilltalsnamn",
+    "value": null,
+    "value_raw": "Michal",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UnderskriftHandlingEfternamn",
+    "value": null,
+    "value_raw": "Stala",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UnderskriftHandlingRoll",
+    "value": null,
+    "value_raw": "Styrelseordförande",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UndertecknandeDatum",
+    "value": null,
+    "value_raw": "2023-06-30",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UnderskriftHandlingTilltalsnamn",
+    "value": null,
+    "value_raw": "Hubert",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UnderskriftHandlingEfternamn",
+    "value": null,
+    "value_raw": "Warzynski",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UnderskriftHandlingRoll",
+    "value": null,
+    "value_raw": "Styrelseledamot",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UndertecknandeDatum",
+    "value": null,
+    "value_raw": "2023-06-30",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UnderskriftHandlingTilltalsnamn",
+    "value": null,
+    "value_raw": "Rickard",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UnderskriftHandlingEfternamn",
+    "value": null,
+    "value_raw": "Nygren",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UnderskriftHandlingRoll",
+    "value": null,
+    "value_raw": "Styrelseledamot",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UndertecknandeDatum",
+    "value": null,
+    "value_raw": "2023-06-30",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UnderskriftHandlingTilltalsnamn",
+    "value": null,
+    "value_raw": "Erik",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UnderskriftHandlingEfternamn",
+    "value": null,
+    "value_raw": "Dahlberg",
+    "context": "period0",
+    "unit": ""
+  },
+  {
+    "name": "se-gen-base:UnderskriftHandlingRoll",
+    "value": null,
+    "value_raw": "Verkställande direktör",
+    "context": "period0",
+    "unit": ""
+  }
+]

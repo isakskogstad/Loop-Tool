@@ -19,6 +19,29 @@ export interface Trademark {
   registrationDate: string | null
 }
 
+export interface Investor {
+  name: string
+  type: string | null // 'vc', 'family_office', 'government', etc.
+  investmentRound: string | null
+  isLeadInvestor: boolean
+  website: string | null
+}
+
+export interface Industry {
+  sniCode: string
+  sniDescription: string | null
+  isPrimary: boolean
+}
+
+export interface EquityOffering {
+  offeringType: string
+  status: string | null
+  amountSek: number | null
+  subscriptionStart: string | null
+  subscriptionEnd: string | null
+  exchange: string | null
+}
+
 export interface CompanyWithCoords {
   orgnr: string
   name: string
@@ -63,6 +86,16 @@ export interface CompanyWithCoords {
   // Address
   address: string | null
   postal_code: string | null
+  // Investors
+  investors: Investor[]
+  // NEW: Additional fields
+  equity_ratio: number | null // Soliditet
+  parent_name: string | null // Moderbolag
+  group_top_name: string | null // Koncernspets
+  industries: Industry[] // SNI-koder
+  announcement_count: number // Antal kungörelser
+  latest_announcement_date: string | null // Senaste kungörelse
+  equity_offering: EquityOffering | null // Aktiv nyemission
 }
 
 export interface Role {
@@ -120,7 +153,10 @@ export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
       linkedin_url,
       address,
       postal_code,
-      postal_city
+      postal_city,
+      equity_ratio,
+      parent_name,
+      group_top_name
     `)
 
   console.log('Companies query result:', { count: companiesData?.length, error: companiesError })
@@ -184,6 +220,61 @@ export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
 
   console.log('Annual reports query result:', { count: reportsData?.length, error: reportsError })
 
+  // 7. Fetch investors from view
+  const { data: investorsData, error: investorsError } = await supabase
+    .from('company_investors_view')
+    .select(`
+      company_orgnr,
+      investor_name,
+      investor_type,
+      investment_round,
+      is_lead_investor,
+      investor_website
+    `)
+    .eq('is_current', true)
+
+  console.log('Investors query result:', { count: investorsData?.length, error: investorsError })
+
+  // 8. Fetch industries (SNI-koder)
+  const { data: industriesData, error: industriesError } = await supabase
+    .from('industries')
+    .select(`
+      company_orgnr,
+      sni_code,
+      sni_description,
+      is_primary
+    `)
+    .order('is_primary', { ascending: false })
+
+  console.log('Industries query result:', { count: industriesData?.length, error: industriesError })
+
+  // 9. Fetch announcements (kungörelser) - count and latest per company
+  const { data: announcementsData, error: announcementsError } = await supabase
+    .from('announcements')
+    .select(`
+      company_orgnr,
+      announcement_date
+    `)
+    .order('announcement_date', { ascending: false })
+
+  console.log('Announcements query result:', { count: announcementsData?.length, error: announcementsError })
+
+  // 10. Fetch active equity offerings (nyemissioner)
+  const { data: offeringsData, error: offeringsError } = await supabase
+    .from('equity_offerings')
+    .select(`
+      company_orgnr,
+      offering_type,
+      status,
+      amount_sek,
+      subscription_start,
+      subscription_end,
+      exchange
+    `)
+    .in('status', ['active', 'upcoming'])
+
+  console.log('Equity offerings query result:', { count: offeringsData?.length, error: offeringsError })
+
   // Create lookup maps
   const companiesMap = new Map(companiesData?.map(c => [c.orgnr, c]) || [])
 
@@ -230,6 +321,62 @@ export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
     }
   })
 
+  // Group investors by company
+  const investorsMap = new Map<string, Investor[]>()
+  investorsData?.forEach(inv => {
+    const existing = investorsMap.get(inv.company_orgnr) || []
+    existing.push({
+      name: inv.investor_name,
+      type: inv.investor_type,
+      investmentRound: inv.investment_round,
+      isLeadInvestor: inv.is_lead_investor || false,
+      website: inv.investor_website
+    })
+    investorsMap.set(inv.company_orgnr, existing)
+  })
+
+  // Group industries by company
+  const industriesMap = new Map<string, Industry[]>()
+  industriesData?.forEach(ind => {
+    const existing = industriesMap.get(ind.company_orgnr) || []
+    existing.push({
+      sniCode: ind.sni_code,
+      sniDescription: ind.sni_description,
+      isPrimary: ind.is_primary || false
+    })
+    industriesMap.set(ind.company_orgnr, existing)
+  })
+
+  // Count announcements per company and get latest date
+  const announcementsMap = new Map<string, { count: number, latestDate: string | null }>()
+  announcementsData?.forEach(ann => {
+    const existing = announcementsMap.get(ann.company_orgnr)
+    if (!existing) {
+      announcementsMap.set(ann.company_orgnr, {
+        count: 1,
+        latestDate: ann.announcement_date
+      })
+    } else {
+      existing.count++
+      // Keep the latest date (already sorted desc, so first is latest)
+    }
+  })
+
+  // Map equity offerings by company
+  const offeringsMap = new Map<string, EquityOffering>()
+  offeringsData?.forEach(off => {
+    if (off.company_orgnr && !offeringsMap.has(off.company_orgnr)) {
+      offeringsMap.set(off.company_orgnr, {
+        offeringType: off.offering_type,
+        status: off.status,
+        amountSek: off.amount_sek,
+        subscriptionStart: off.subscription_start,
+        subscriptionEnd: off.subscription_end,
+        exchange: off.exchange
+      })
+    }
+  })
+
   // Merge all data
   const result = (loopData || []).map(company => {
     const companyInfo = companiesMap.get(company.orgnr)
@@ -237,6 +384,10 @@ export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
     const owners = ownersMap.get(company.orgnr) || []
     const trademarks = trademarksMap.get(company.orgnr) || []
     const annualReportYear = reportsMap.get(company.orgnr) || null
+    const investors = investorsMap.get(company.orgnr) || []
+    const industries = industriesMap.get(company.orgnr) || []
+    const announcementInfo = announcementsMap.get(company.orgnr)
+    const equityOffering = offeringsMap.get(company.orgnr) || null
 
     // Find VD
     const vd = roles.find(r =>
@@ -305,6 +456,16 @@ export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
       // Address
       address: companyInfo?.address || null,
       postal_code: companyInfo?.postal_code || null,
+      // Investors
+      investors: investors,
+      // NEW: Additional fields
+      equity_ratio: companyInfo?.equity_ratio ? Number(companyInfo.equity_ratio) : null,
+      parent_name: companyInfo?.parent_name || null,
+      group_top_name: companyInfo?.group_top_name || null,
+      industries: industries,
+      announcement_count: announcementInfo?.count || 0,
+      latest_announcement_date: announcementInfo?.latestDate || null,
+      equity_offering: equityOffering,
     }
   })
 

@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, ExternalLink, ChevronUp, ChevronDown, ChevronsUpDown, Building2, Globe, FileText, Award } from 'lucide-react'
+import { TrendingUp, TrendingDown, ExternalLink, ChevronUp, ChevronDown, ChevronsUpDown, Building2, Globe, FileText, Award, Users, Linkedin, Bell, DollarSign, Percent, UserCheck, Building } from 'lucide-react'
 import type { CompanyWithCoords } from '../../lib/supabase'
 import { useMapContext } from '../../context/MapContext'
 import { useState, useMemo } from 'react'
@@ -7,7 +7,7 @@ interface DataTableProps {
   companies: CompanyWithCoords[]
 }
 
-type SortField = 'name' | 'sector' | 'turnover' | 'turnover2023' | 'ebit2023' | 'growth' | 'funding' | 'latestRound' | 'valuation' | 'city' | 'ceo' | 'employees' | 'trademarks' | 'annualReport'
+type SortField = 'name' | 'sector' | 'turnover' | 'turnover2023' | 'ebit2023' | 'ebit2024' | 'growth' | 'funding' | 'latestRound' | 'valuation' | 'city' | 'ceo' | 'chairman' | 'boardCount' | 'employees' | 'trademarks' | 'annualReport' | 'investors' | 'equityRatio' | 'announcements' | 'sniCode' | 'parentCompany'
 type SortDirection = 'asc' | 'desc' | null
 
 // Color palette for generated logos - same as CompanyModal
@@ -147,6 +147,30 @@ export function DataTable({ companies }: DataTableProps) {
           case 'annualReport':
             comparison = (a.annual_report_year || 0) - (b.annual_report_year || 0)
             break
+          case 'investors':
+            comparison = (a.investors?.length || 0) - (b.investors?.length || 0)
+            break
+          case 'chairman':
+            comparison = (a.chairman_name || '').localeCompare(b.chairman_name || '', 'sv')
+            break
+          case 'boardCount':
+            comparison = (a.board_members?.length || 0) - (b.board_members?.length || 0)
+            break
+          case 'ebit2024':
+            comparison = (a.ebit_2024_sek || 0) - (b.ebit_2024_sek || 0)
+            break
+          case 'equityRatio':
+            comparison = (a.equity_ratio || 0) - (b.equity_ratio || 0)
+            break
+          case 'announcements':
+            comparison = (a.announcement_count || 0) - (b.announcement_count || 0)
+            break
+          case 'sniCode':
+            comparison = (a.industries?.[0]?.sniCode || '').localeCompare(b.industries?.[0]?.sniCode || '', 'sv')
+            break
+          case 'parentCompany':
+            comparison = (a.parent_name || a.group_top_name || '').localeCompare(b.parent_name || b.group_top_name || '', 'sv')
+            break
         }
         return sortDirection === 'asc' ? comparison : -comparison
       })
@@ -159,7 +183,7 @@ export function DataTable({ companies }: DataTableProps) {
     <div className="h-full flex flex-col bg-white">
       {/* Table Header */}
       <div className="overflow-x-auto flex-1">
-        <table className="w-full min-w-[1600px]">
+        <table className="w-full min-w-[2200px]">
           <thead className="sticky top-0 bg-gray-50 border-b border-gray-200 z-10">
             <tr className="text-xs font-medium text-gray-500 uppercase tracking-wider">
               <th className="px-4 py-3 text-left w-[200px]">
@@ -172,9 +196,19 @@ export function DataTable({ companies }: DataTableProps) {
                   Sektor {getSortIcon('sector')}
                 </button>
               </th>
-              <th className="px-2 py-3 text-left w-[130px]">
+              <th className="px-2 py-3 text-left w-[120px]">
                 <button onClick={() => handleSort('ceo')} className="flex items-center gap-1 hover:text-gray-900">
                   VD {getSortIcon('ceo')}
+                </button>
+              </th>
+              <th className="px-2 py-3 text-left w-[100px]">
+                <button onClick={() => handleSort('chairman')} className="flex items-center gap-1 hover:text-gray-900">
+                  Ordf. {getSortIcon('chairman')}
+                </button>
+              </th>
+              <th className="px-2 py-3 text-center w-[45px]">
+                <button onClick={() => handleSort('boardCount')} className="flex items-center justify-center gap-1 hover:text-gray-900 w-full">
+                  Styr {getSortIcon('boardCount')}
                 </button>
               </th>
               <th className="px-2 py-3 text-right w-[80px]">
@@ -193,8 +227,18 @@ export function DataTable({ companies }: DataTableProps) {
                 </button>
               </th>
               <th className="px-2 py-3 text-right w-[70px]">
+                <button onClick={() => handleSort('ebit2024')} className="flex items-center justify-end gap-1 hover:text-gray-900 w-full">
+                  EBIT 24 {getSortIcon('ebit2024')}
+                </button>
+              </th>
+              <th className="px-2 py-3 text-right w-[70px]">
                 <button onClick={() => handleSort('growth')} className="flex items-center justify-end gap-1 hover:text-gray-900 w-full">
                   Tillv. {getSortIcon('growth')}
+                </button>
+              </th>
+              <th className="px-2 py-3 text-right w-[55px]">
+                <button onClick={() => handleSort('equityRatio')} className="flex items-center justify-end gap-1 hover:text-gray-900 w-full">
+                  Sol. {getSortIcon('equityRatio')}
                 </button>
               </th>
               <th className="px-2 py-3 text-right w-[80px]">
@@ -222,9 +266,19 @@ export function DataTable({ companies }: DataTableProps) {
                   Anst {getSortIcon('employees')}
                 </button>
               </th>
-              <th className="px-2 py-3 text-left w-[90px]">
+              <th className="px-2 py-3 text-left w-[80px]">
                 <button onClick={() => handleSort('city')} className="flex items-center gap-1 hover:text-gray-900">
                   Stad {getSortIcon('city')}
+                </button>
+              </th>
+              <th className="px-2 py-3 text-left w-[55px]">
+                <button onClick={() => handleSort('sniCode')} className="flex items-center gap-1 hover:text-gray-900">
+                  SNI {getSortIcon('sniCode')}
+                </button>
+              </th>
+              <th className="px-2 py-3 text-left w-[90px]">
+                <button onClick={() => handleSort('parentCompany')} className="flex items-center gap-1 hover:text-gray-900">
+                  Koncern {getSortIcon('parentCompany')}
                 </button>
               </th>
               <th className="px-2 py-3 text-center w-[50px]">
@@ -233,7 +287,18 @@ export function DataTable({ companies }: DataTableProps) {
                 </button>
               </th>
               <th className="px-2 py-3 text-center w-[50px]">ÅR</th>
-              <th className="px-2 py-3 w-[50px]"></th>
+              <th className="px-2 py-3 text-center w-[55px]">
+                <button onClick={() => handleSort('investors')} className="flex items-center justify-center gap-1 hover:text-gray-900 w-full">
+                  Inv. {getSortIcon('investors')}
+                </button>
+              </th>
+              <th className="px-2 py-3 text-center w-[50px]">
+                <button onClick={() => handleSort('announcements')} className="flex items-center justify-center gap-1 hover:text-gray-900 w-full">
+                  Kung. {getSortIcon('announcements')}
+                </button>
+              </th>
+              <th className="px-2 py-3 text-center w-[45px]">Em.</th>
+              <th className="px-2 py-3 w-[60px]"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -288,7 +353,31 @@ export function DataTable({ companies }: DataTableProps) {
                 {/* CEO */}
                 <td className="px-2 py-2">
                   {company.ceo_name ? (
-                    <span className="text-xs text-gray-700 truncate max-w-[120px] block">{company.ceo_name}</span>
+                    <span className="text-xs text-gray-700 truncate max-w-[110px] block">{company.ceo_name}</span>
+                  ) : (
+                    <span className="text-gray-300 text-xs">-</span>
+                  )}
+                </td>
+
+                {/* Chairman */}
+                <td className="px-2 py-2">
+                  {company.chairman_name ? (
+                    <span className="text-xs text-gray-700 truncate max-w-[90px] block">{company.chairman_name}</span>
+                  ) : (
+                    <span className="text-gray-300 text-xs">-</span>
+                  )}
+                </td>
+
+                {/* Board Count */}
+                <td className="px-2 py-2 text-center">
+                  {company.board_members && company.board_members.length > 0 ? (
+                    <span
+                      className="inline-flex items-center gap-0.5 text-xs text-gray-600"
+                      title={company.board_members.join(', ')}
+                    >
+                      <UserCheck className="w-3 h-3" />
+                      {company.board_members.length}
+                    </span>
                   ) : (
                     <span className="text-gray-300 text-xs">-</span>
                   )}
@@ -317,6 +406,15 @@ export function DataTable({ companies }: DataTableProps) {
                   </span>
                 </td>
 
+                {/* EBIT 2024 */}
+                <td className="px-2 py-2 text-right">
+                  <span className={`text-xs tabular-nums ${
+                    company.ebit_2024_sek && company.ebit_2024_sek < 0 ? 'text-red-600' : 'text-gray-600'
+                  }`}>
+                    {formatCurrency(company.ebit_2024_sek)}
+                  </span>
+                </td>
+
                 {/* Growth */}
                 <td className="px-2 py-2 text-right">
                   {company.growth_2023_2024_percent !== null ? (
@@ -329,6 +427,20 @@ export function DataTable({ companies }: DataTableProps) {
                         <TrendingDown className="w-3 h-3" />
                       )}
                       {formatPercent(company.growth_2023_2024_percent)}
+                    </span>
+                  ) : (
+                    <span className="text-gray-300 text-xs">-</span>
+                  )}
+                </td>
+
+                {/* Equity Ratio (Soliditet) */}
+                <td className="px-2 py-2 text-right">
+                  {company.equity_ratio !== null ? (
+                    <span className={`inline-flex items-center gap-0.5 text-xs tabular-nums ${
+                      company.equity_ratio >= 30 ? 'text-green-600' : company.equity_ratio >= 15 ? 'text-yellow-600' : 'text-red-600'
+                    }`}>
+                      <Percent className="w-3 h-3" />
+                      {company.equity_ratio.toFixed(0)}
                     </span>
                   ) : (
                     <span className="text-gray-300 text-xs">-</span>
@@ -375,7 +487,36 @@ export function DataTable({ companies }: DataTableProps) {
                 {/* City */}
                 <td className="px-2 py-2">
                   {company.city ? (
-                    <span className="text-xs text-gray-600 truncate max-w-[80px] block">{company.city}</span>
+                    <span className="text-xs text-gray-600 truncate max-w-[70px] block">{company.city}</span>
+                  ) : (
+                    <span className="text-gray-300 text-xs">-</span>
+                  )}
+                </td>
+
+                {/* SNI Code */}
+                <td className="px-2 py-2">
+                  {company.industries && company.industries.length > 0 ? (
+                    <span
+                      className="text-xs text-gray-600 truncate max-w-[50px] block font-mono"
+                      title={`${company.industries[0].sniCode}: ${company.industries[0].sniDescription || ''}`}
+                    >
+                      {company.industries[0].sniCode}
+                    </span>
+                  ) : (
+                    <span className="text-gray-300 text-xs">-</span>
+                  )}
+                </td>
+
+                {/* Parent Company / Group */}
+                <td className="px-2 py-2">
+                  {(company.parent_name || company.group_top_name) ? (
+                    <span
+                      className="inline-flex items-center gap-0.5 text-xs text-gray-600 truncate max-w-[80px]"
+                      title={company.group_top_name || company.parent_name || ''}
+                    >
+                      <Building className="w-3 h-3 flex-shrink-0" />
+                      <span className="truncate">{company.parent_name || company.group_top_name}</span>
+                    </span>
                   ) : (
                     <span className="text-gray-300 text-xs">-</span>
                   )}
@@ -412,9 +553,65 @@ export function DataTable({ companies }: DataTableProps) {
                   )}
                 </td>
 
+                {/* Investors */}
+                <td className="px-2 py-2 text-center">
+                  {company.investors && company.investors.length > 0 ? (
+                    <span
+                      className="inline-flex items-center gap-0.5 text-xs text-purple-700"
+                      title={company.investors.map(i => i.name).join(', ')}
+                    >
+                      <Users className="w-3 h-3" />
+                      {company.investors.length}
+                    </span>
+                  ) : (
+                    <span className="text-gray-300 text-xs">-</span>
+                  )}
+                </td>
+
+                {/* Announcements */}
+                <td className="px-2 py-2 text-center">
+                  {company.announcement_count > 0 ? (
+                    <span
+                      className="inline-flex items-center gap-0.5 text-xs text-orange-600"
+                      title={`${company.announcement_count} kungörelser${company.latest_announcement_date ? `, senast ${formatDate(company.latest_announcement_date)}` : ''}`}
+                    >
+                      <Bell className="w-3 h-3" />
+                      {company.announcement_count}
+                    </span>
+                  ) : (
+                    <span className="text-gray-300 text-xs">-</span>
+                  )}
+                </td>
+
+                {/* Equity Offering */}
+                <td className="px-2 py-2 text-center">
+                  {company.equity_offering ? (
+                    <span
+                      className="inline-flex items-center gap-0.5 text-xs text-green-700 font-medium"
+                      title={`${company.equity_offering.offeringType}${company.equity_offering.amountSek ? ` - ${formatCurrency(company.equity_offering.amountSek)}` : ''}`}
+                    >
+                      <DollarSign className="w-3 h-3" />
+                    </span>
+                  ) : (
+                    <span className="text-gray-300 text-xs">-</span>
+                  )}
+                </td>
+
                 {/* Actions */}
                 <td className="px-2 py-2">
                   <div className="flex items-center gap-0.5">
+                    {company.linkedin_url && (
+                      <a
+                        href={company.linkedin_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="p-1 rounded text-gray-400 hover:text-blue-700 hover:bg-blue-50 transition-colors"
+                        title="LinkedIn"
+                      >
+                        <Linkedin className="w-3 h-3" />
+                      </a>
+                    )}
                     {company.website && (
                       <a
                         href={company.website.startsWith('http') ? company.website : `https://${company.website}`}
