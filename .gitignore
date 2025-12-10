@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# POIT Monitor
+poit-monitor/.env
+poit-monitor/venv/
+poit-monitor/__pycache__/
+*.pyc

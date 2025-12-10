@@ -1,0 +1,85 @@
+name: POIT Monitor
+
+on:
+  schedule:
+    # Kör 3 gånger per dag (CET tider)
+    - cron: '0 6 * * *'   # 07:00 CET
+    - cron: '0 12 * * *'  # 13:00 CET  
+    - cron: '0 18 * * *'  # 19:00 CET
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (ingen databas-skrivning)'
+        type: boolean
+        default: false
+      categories:
+        description: 'Kategorier att scrapa (kommaseparerade)'
+        type: string
+        default: 'konkurser,bolagsverkets_registreringar,kallelser'
+      debug:
+        description: 'Debug-läge'
+        type: boolean
+        default: false
+
+env:
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+  SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+  RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+
+jobs:
+  poit-sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser xvfb
+
+      - name: Run POIT Sync
+        run: |
+          # Starta virtual display för Chrome
+          export DISPLAY=:99
+          Xvfb :99 -screen 0 1920x1080x24 &
+          sleep 2
+          
+          # Kör sync
+          python scripts/poit_sync.py \
+            ${{ inputs.dry_run && '--dry-run' || '' }} \
+            ${{ inputs.debug && '--debug' || '' }} \
+            ${{ inputs.categories && format('--categories {0}', inputs.categories) || '' }}
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: poit-sync-logs
+          path: |
+            *.log
+            /tmp/*.png
+          retention-days: 7
+
+  notify-on-failure:
+    needs: poit-sync
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send failure notification
+        run: |
+          echo "POIT Sync failed at $(date)"
+          # Här kan man lägga till Slack/Discord notification
