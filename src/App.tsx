@@ -7,198 +7,99 @@ import { Footer } from './components/Layout/Footer'
 import { StatsBar } from './components/Stats/StatsBar'
 import { useCompanies } from './hooks/useCompanies'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useEffect } from 'react'
 
 function LoadingScreen() {
-  const [progress, setProgress] = useState(0)
-  const [loadingText, setLoadingText] = useState('Initierar')
-
-  useEffect(() => {
-    // Simulate loading progress
-    const texts = [
-      'Initierar',
-      'Ansluter till databas',
-      'Hämtar impact-företag',
-      'Förbereder kartan',
-      'Nästan klart'
-    ]
-
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        const newProgress = prev + Math.random() * 15 + 5
-        const textIndex = Math.min(Math.floor(newProgress / 20), texts.length - 1)
-        setLoadingText(texts[textIndex])
-        return Math.min(newProgress, 95)
-      })
-    }, 200)
-
-    return () => clearInterval(interval)
-  }, [])
-
   return (
     <motion.div
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.8, ease: 'easeInOut' }}
-      className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden"
+      transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center overflow-hidden"
     >
       {/* Dark premium background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0A0A0A] via-[#111111] to-[#0A0A0A]" />
-
-      {/* Animated gradient orbs */}
-      <motion.div
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.5, 0.3],
-        }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-loop-lime/20 blur-[100px]"
-      />
-      <motion.div
-        animate={{
-          scale: [1.2, 1, 1.2],
-          opacity: [0.2, 0.4, 0.2],
-        }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-        className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-primary-blue/20 blur-[100px]"
-      />
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-loop-black to-gray-900" />
 
       {/* Content container */}
-      <div className="relative z-10 text-center px-6 max-w-md w-full">
-        {/* Logo animation */}
-        <motion.div
-          initial={{ scale: 0, rotate: -180 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ duration: 0.8, type: 'spring', bounce: 0.4 }}
-          className="relative w-28 h-28 mx-auto mb-8"
-        >
-          {/* Outer glow ring */}
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-            className="absolute inset-0 rounded-3xl border-2 border-loop-lime/30"
-            style={{
-              background: 'conic-gradient(from 0deg, transparent, rgba(205,255,0,0.3), transparent)',
-            }}
-          />
-
-          {/* Logo container */}
-          <div className="absolute inset-2 rounded-2xl bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center shadow-2xl border border-gray-700/50">
-            <motion.div
-              animate={{
-                scale: [1, 1.15, 1],
-                boxShadow: [
-                  '0 0 20px rgba(205,255,0,0.5)',
-                  '0 0 40px rgba(205,255,0,0.8)',
-                  '0 0 20px rgba(205,255,0,0.5)',
-                ],
+      <div className="relative z-10 text-center">
+        {/* Logo text with letter flip animation */}
+        <div className="flex items-center justify-center gap-[0.15em] overflow-hidden">
+          {/* "Loop" letters - white */}
+          {'Loop'.split('').map((letter, i) => (
+            <motion.span
+              key={`loop-${i}`}
+              initial={{ opacity: 0, y: '100%', rotateX: -90 }}
+              animate={{ opacity: 1, y: 0, rotateX: 0 }}
+              transition={{
+                duration: 0.6,
+                delay: 0.1 + i * 0.1,
+                ease: [0.16, 1, 0.3, 1],
               }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-              className="w-12 h-12 rounded-full bg-gradient-to-br from-loop-lime via-loop-lime-dark to-loop-lime"
-            />
-          </div>
-        </motion.div>
+              className="inline-block font-serif font-bold text-white"
+              style={{ fontSize: 'clamp(3rem, 12vw, 8rem)', transformOrigin: 'top center' }}
+            >
+              {letter}
+            </motion.span>
+          ))}
 
-        {/* Brand name with letter animation */}
+          {/* Space */}
+          <span className="inline-block w-[0.3em]" />
+
+          {/* "Tool" letters - lime */}
+          {'Tool'.split('').map((letter, i) => (
+            <motion.span
+              key={`tool-${i}`}
+              initial={{ opacity: 0, y: '100%', rotateX: -90 }}
+              animate={{ opacity: 1, y: 0, rotateX: 0 }}
+              transition={{
+                duration: 0.6,
+                delay: 0.6 + i * 0.1,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="inline-block font-serif font-bold text-loop-lime"
+              style={{ fontSize: 'clamp(3rem, 12vw, 8rem)', transformOrigin: 'top center' }}
+            >
+              {letter}
+            </motion.span>
+          ))}
+        </div>
+
+        {/* Underline that grows */}
         <motion.div
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.8, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
+          className="h-1 mx-auto mt-4 rounded-full origin-left"
+          style={{
+            background: 'linear-gradient(90deg, #CDFF00, #14b8a6)',
+            width: '80%',
+            maxWidth: '400px',
+          }}
+        />
+
+        {/* Tagline */}
+        <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
-          className="mb-8"
+          transition={{ duration: 0.6, delay: 1.6, ease: 'easeOut' }}
+          className="mt-6 text-lg text-gray-400 font-medium tracking-wide"
         >
-          <h1 className="text-5xl sm:text-6xl font-serif font-bold tracking-tight mb-2">
-            {'Loop Tool'.split('').map((letter, i) => (
-              <motion.span
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 + i * 0.05, duration: 0.4 }}
-                className={letter === ' ' ? 'inline-block w-3' : 'inline-block'}
-                style={{
-                  background: 'linear-gradient(135deg, #CDFF00 0%, #FFFFFF 50%, #CDFF00 100%)',
-                  backgroundClip: 'text',
-                  WebkitBackgroundClip: 'text',
-                  color: 'transparent',
-                }}
-              >
-                {letter}
-              </motion.span>
-            ))}
-          </h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="text-gray-400 text-sm font-medium tracking-widest uppercase"
-          >
-            Impact Ecosystem Sverige
-          </motion.p>
-        </motion.div>
+          Impact Investing Database
+        </motion.p>
 
-        {/* Progress bar */}
-        <motion.div
-          initial={{ opacity: 0, scaleX: 0.8 }}
-          animate={{ opacity: 1, scaleX: 1 }}
-          transition={{ delay: 0.6 }}
-          className="mb-4"
-        >
-          <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden border border-gray-700/50">
-            <motion.div
-              className="h-full bg-gradient-to-r from-loop-lime via-loop-lime-dark to-loop-lime rounded-full"
-              initial={{ width: '0%' }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.3 }}
-              style={{
-                boxShadow: '0 0 20px rgba(205,255,0,0.6)',
-              }}
-            />
-          </div>
-        </motion.div>
-
-        {/* Loading text */}
+        {/* Loading indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.7 }}
-          className="flex items-center justify-center gap-3"
+          transition={{ delay: 2 }}
+          className="mt-8 flex items-center justify-center gap-3"
         >
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
             className="w-4 h-4 border-2 border-loop-lime border-t-transparent rounded-full"
           />
-          <span className="text-sm text-gray-400 font-medium">
-            {loadingText}...
-          </span>
-          <span className="text-sm text-loop-lime font-bold tabular-nums">
-            {Math.round(progress)}%
-          </span>
+          <span className="text-sm text-gray-500 font-medium">Laddar data...</span>
         </motion.div>
-
-        {/* Animated particles */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          {[...Array(6)].map((_, i) => (
-            <motion.div
-              key={i}
-              initial={{
-                opacity: 0,
-                x: Math.random() * 400 - 200,
-                y: 100,
-              }}
-              animate={{
-                opacity: [0, 1, 0],
-                y: -100,
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                delay: i * 0.5,
-                ease: 'easeOut',
-              }}
-              className="absolute left-1/2 bottom-0 w-1 h-1 rounded-full bg-loop-lime"
-            />
-          ))}
-        </div>
       </div>
     </motion.div>
   )

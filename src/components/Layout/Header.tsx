@@ -36,19 +36,19 @@ export function Header({ companyCount, loading }: HeaderProps) {
               <div className="w-6 h-6 rounded-full bg-gradient-to-br from-loop-lime via-loop-lime-dark to-loop-lime shadow-[0_0_12px_rgba(205,255,0,0.6)] group-hover:shadow-[0_0_20px_rgba(205,255,0,0.8)] transition-all duration-300" />
             </motion.div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <div>
-                <h1 className="font-serif font-bold text-gray-900 text-2xl leading-tight tracking-tight">
-                  Loop Data
+                <h1 className="font-serif font-bold text-gray-900 text-lg sm:text-2xl leading-tight tracking-tight">
+                  Loop Tool
                 </h1>
-                <p className="text-xs text-gray-500 font-medium mt-1">
+                <p className="text-[10px] sm:text-xs text-gray-500 font-medium mt-0.5 sm:mt-1 hidden xs:block">
                   {loading ? (
                     <span className="inline-flex items-center gap-1.5">
                       <span className="inline-block w-1.5 h-1.5 rounded-full bg-gray-400 animate-pulse" />
-                      Laddar företagsdata...
+                      Laddar...
                     </span>
                   ) : (
-                    'Impact Ecosystem Sverige'
+                    'Impact Ecosystem'
                   )}
                 </p>
               </div>
@@ -74,29 +74,29 @@ export function Header({ companyCount, loading }: HeaderProps) {
           </div>
 
           {/* View Toggle & Search */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {/* Premium View Toggle with lime accent */}
-            <div className="flex items-center bg-loop-black rounded-2xl p-1 shadow-xl border border-gray-800">
+            <div className="flex items-center bg-loop-black rounded-xl sm:rounded-2xl p-0.5 sm:p-1 shadow-xl border border-gray-800">
               <button
                 onClick={() => setViewMode('map')}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
+                className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 ${
                   viewMode === 'map'
                     ? 'bg-gradient-to-r from-loop-lime to-loop-lime-dark text-loop-black shadow-lg shadow-lime-500/30 scale-105'
                     : 'text-gray-400 hover:text-white hover:bg-gray-800'
                 }`}
               >
-                <Map className="w-4 h-4" />
+                <Map className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 <span className="hidden sm:inline">Karta</span>
               </button>
               <button
                 onClick={() => setViewMode('table')}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
+                className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold transition-all duration-300 ${
                   viewMode === 'table'
                     ? 'bg-gradient-to-r from-loop-lime to-loop-lime-dark text-loop-black shadow-lg shadow-lime-500/30 scale-105'
                     : 'text-gray-400 hover:text-white hover:bg-gray-800'
                 }`}
               >
-                <Table2 className="w-4 h-4" />
+                <Table2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 <span className="hidden sm:inline">Data</span>
               </button>
             </div>
