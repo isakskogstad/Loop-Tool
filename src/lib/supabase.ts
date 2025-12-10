@@ -118,6 +118,8 @@ export interface CompanyWithCoords {
 }
 
 export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
+  console.log('Starting fetchCompaniesWithCoords...')
+
   // Join companies (with coords) and loop_table (with financials)
   const { data, error } = await supabase
     .from('companies')
@@ -133,7 +135,12 @@ export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
     .not('latitude', 'is', null)
     .not('longitude', 'is', null)
 
-  if (error) throw error
+  console.log('Companies query result:', { count: data?.length, error })
+
+  if (error) {
+    console.error('Companies query error:', error)
+    throw error
+  }
 
   // Get loop_table data for enrichment
   const { data: loopData, error: loopError } = await supabase
@@ -150,7 +157,12 @@ export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
       investment_status
     `)
 
-  if (loopError) throw loopError
+  console.log('Loop table query result:', { count: loopData?.length, error: loopError })
+
+  if (loopError) {
+    console.error('Loop table query error:', loopError)
+    throw loopError
+  }
 
   // Create lookup map for loop_table data
   const loopMap = new Map(loopData?.map(l => [l.orgnr, l]) || [])
@@ -158,11 +170,14 @@ export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
   // Merge data
   return (data || []).map(company => {
     const loopInfo = loopMap.get(company.orgnr)
+    // Handle both string and number types for lat/lng
+    const lat = typeof company.latitude === 'string' ? parseFloat(company.latitude) : Number(company.latitude)
+    const lng = typeof company.longitude === 'string' ? parseFloat(company.longitude) : Number(company.longitude)
     return {
       orgnr: company.orgnr,
       name: company.name,
-      latitude: parseFloat(company.latitude),
-      longitude: parseFloat(company.longitude),
+      latitude: lat,
+      longitude: lng,
       city: company.city,
       county: company.county,
       logo_url: company.logo_url,

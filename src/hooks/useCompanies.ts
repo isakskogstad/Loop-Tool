@@ -11,11 +11,16 @@ export function useCompanies() {
     async function load() {
       try {
         setLoading(true)
+        console.log('Fetching companies with coordinates...')
         const data = await fetchCompaniesWithCoords()
+        console.log(`Fetched ${data.length} companies`)
+        if (data.length > 0) {
+          console.log('Sample company:', data[0])
+        }
         setCompanies(data)
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('Failed to fetch companies'))
         console.error('Error fetching companies:', err)
+        setError(err instanceof Error ? err : new Error('Failed to fetch companies'))
       } finally {
         setLoading(false)
       }
