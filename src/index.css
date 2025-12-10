@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+@theme {
+  --color-loop-lime: #CDFF00;
+  --color-loop-lime-dark: #B8E600;
+  --color-loop-black: #0A0A0A;
+  --color-loop-gray: #1A1A1A;
+  --color-loop-gray-light: #2A2A2A;
+}
+
+:root {
+  --loop-lime: #CDFF00;
+  --loop-black: #0A0A0A;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--loop-black);
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--loop-lime);
+  border-radius: 4px;
+}
+
+.glow-lime {
+  box-shadow: 0 0 30px rgba(205, 255, 0, 0.4);
+}
+
+.text-glow {
+  text-shadow: 0 0 20px rgba(205, 255, 0, 0.5);
+}
+
+.bg-gradient-loop {
+  background: linear-gradient(135deg, #0A0A0A 0%, #1A1A1A 50%, #0A0A0A 100%);
+}
+
+.stat-number {
+  font-variant-numeric: tabular-nums;
+}
+
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 40px rgba(205, 255, 0, 0.15);
+}
