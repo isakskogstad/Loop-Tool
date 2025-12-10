@@ -17,11 +17,11 @@ export function Header({ companyCount, loading }: HeaderProps) {
   const [showFilters, setShowFilters] = useState(false)
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-[999]">
-      {/* Premium glassmorphism background with gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/90 to-gray-50/95 backdrop-blur-xl border-b border-gray-200/60 shadow-[0_2px_16px_rgba(0,0,0,0.04)]" />
+    <header className="relative bg-gradient-to-r from-white via-gray-50/50 to-white border-b border-gray-200">
+      {/* Subtle gradient accent line at top */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-loop-lime via-teal-400 to-loop-lime" />
 
-      <div className="relative max-w-screen-xl mx-auto px-4 sm:px-6 py-4">
+      <div className="relative px-4 sm:px-6 py-4 pt-5">
         <div className="flex items-center justify-between gap-4">
           {/* Logo & Title */}
           <div className="flex items-center gap-4">
