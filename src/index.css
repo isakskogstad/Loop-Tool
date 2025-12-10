@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=DM+Serif+Display:ital@0;1&display=swap');
 
 /* Leaflet base styles */
 @import "leaflet/dist/leaflet.css";
@@ -30,7 +30,7 @@ html {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #f8fafc;
+  background: linear-gradient(to bottom, #FAFAFA 0%, #F3F4F6 100%);
   color: #0f172a;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -76,8 +76,48 @@ body {
 }
 
 .card-hover:hover {
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.01);
   box-shadow: 0 12px 40px rgba(205, 255, 0, 0.15);
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-dark {
+  background: rgba(10, 10, 10, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Premium gradient backgrounds */
+.bg-gradient-premium {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.bg-gradient-success {
+  background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+}
+
+.bg-gradient-lime-premium {
+  background: linear-gradient(135deg, #CDFF00 0%, #B8E600 50%, #a3d000 100%);
+}
+
+/* Number counter animation */
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Leaflet Map Customizations */

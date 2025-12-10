@@ -45,12 +45,12 @@ export function DataTable({ companies }: DataTableProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="h-full overflow-auto bg-white"
+      className="h-full overflow-auto bg-gradient-to-b from-white to-gray-50"
     >
       <div className="min-w-[900px]">
-        {/* Table Header */}
-        <div className="sticky top-0 bg-gray-50 border-b border-gray-200 z-10">
-          <div className="grid grid-cols-12 gap-4 px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+        {/* Table Header - Premium sticky with glassmorphism */}
+        <div className="sticky top-0 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-b border-gray-700 z-10 shadow-lg">
+          <div className="grid grid-cols-12 gap-4 px-6 py-4 text-xs font-bold text-white uppercase tracking-wider">
             <div className="col-span-3">Företag</div>
             <div className="col-span-2">Sektor</div>
             <div className="col-span-1 text-right">Omsättning</div>
@@ -62,42 +62,48 @@ export function DataTable({ companies }: DataTableProps) {
           </div>
         </div>
 
-        {/* Table Body */}
+        {/* Table Body - Zebra striping with gradients */}
         <div className="divide-y divide-gray-100">
           {filteredCompanies.map((company, index) => (
             <motion.div
               key={company.orgnr}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.02, duration: 0.2 }}
+              transition={{ delay: Math.min(index * 0.015, 0.5), duration: 0.25 }}
               onClick={() => setSelectedCompany(company)}
-              className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-gray-50 cursor-pointer transition-colors group"
+              className={`grid grid-cols-12 gap-4 px-6 py-5 cursor-pointer transition-all duration-300 group hover:scale-[1.01] hover:shadow-lg hover:z-10 rounded-lg mx-2 my-1 ${
+                index % 2 === 0
+                  ? 'bg-white hover:bg-gradient-to-r hover:from-white hover:to-gray-50'
+                  : 'bg-gray-50/50 hover:bg-gradient-to-r hover:from-gray-50 hover:to-white'
+              }`}
             >
               {/* Company Name & Logo */}
               <div className="col-span-3 flex items-center gap-3">
                 {company.logo_url ? (
-                  <img
-                    src={company.logo_url}
-                    alt={company.name}
-                    className="w-8 h-8 rounded-lg object-contain bg-gray-100"
-                  />
+                  <div className="relative">
+                    <img
+                      src={company.logo_url}
+                      alt={company.name}
+                      className="w-10 h-10 rounded-xl object-contain bg-gradient-to-br from-gray-50 to-gray-100 p-1.5 border border-gray-200 shadow-sm group-hover:shadow-md transition-all duration-300"
+                    />
+                  </div>
                 ) : (
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#CDFF00] to-[#a8d900] flex items-center justify-center text-[#0A0A0A] font-bold text-xs">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-loop-lime via-loop-lime-dark to-loop-lime flex items-center justify-center text-loop-black font-bold text-sm shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-110">
                     {company.name.charAt(0)}
                   </div>
                 )}
                 <div className="min-w-0">
-                  <div className="font-medium text-gray-900 truncate group-hover:text-[#0A0A0A]">
+                  <div className="font-semibold text-gray-900 truncate group-hover:text-primary-blue transition-colors duration-300">
                     {company.name}
                   </div>
-                  <div className="text-xs text-gray-400 font-mono">{company.orgnr}</div>
+                  <div className="text-xs text-gray-400 font-mono mt-0.5">{company.orgnr}</div>
                 </div>
               </div>
 
               {/* Sector */}
               <div className="col-span-2 flex items-center">
                 {company.sector ? (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 truncate">
+                  <span className="inline-flex items-center px-3 py-1.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-primary-blue/10 to-purple/10 text-primary-blue border border-primary-blue/20 truncate group-hover:shadow-md transition-all duration-300">
                     {company.sector}
                   </span>
                 ) : (
@@ -107,21 +113,25 @@ export function DataTable({ companies }: DataTableProps) {
 
               {/* Turnover */}
               <div className="col-span-1 flex items-center justify-end">
-                <span className="font-medium text-gray-900 tabular-nums">
+                <span className="font-bold text-gray-900 tabular-nums text-sm">
                   {formatCurrency(company.turnover_2024_sek)}
                 </span>
               </div>
 
               {/* Growth */}
-              <div className="col-span-1 flex items-center justify-end gap-1">
+              <div className="col-span-1 flex items-center justify-end gap-1.5">
                 {company.growth_2023_2024_percent !== null ? (
                   <>
-                    {company.growth_2023_2024_percent >= 0 ? (
-                      <TrendingUp className="w-3 h-3 text-green-500" />
-                    ) : (
-                      <TrendingDown className="w-3 h-3 text-red-500" />
-                    )}
-                    <span className={`font-medium tabular-nums ${
+                    <div className={`p-1 rounded-lg ${
+                      company.growth_2023_2024_percent >= 0 ? 'bg-green-100' : 'bg-red-100'
+                    }`}>
+                      {company.growth_2023_2024_percent >= 0 ? (
+                        <TrendingUp className="w-3.5 h-3.5 text-green-600" />
+                      ) : (
+                        <TrendingDown className="w-3.5 h-3.5 text-red-600" />
+                      )}
+                    </div>
+                    <span className={`font-bold tabular-nums text-sm ${
                       company.growth_2023_2024_percent >= 0 ? 'text-green-600' : 'text-red-600'
                     }`}>
                       {formatPercent(company.growth_2023_2024_percent)}
@@ -161,7 +171,7 @@ export function DataTable({ companies }: DataTableProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                  className="p-2 rounded-xl text-gray-400 hover:text-white hover:bg-gradient-to-br hover:from-primary-blue hover:to-purple transition-all duration-300 hover:shadow-lg hover:scale-110"
                 >
                   <ExternalLink className="w-4 h-4" />
                 </a>
@@ -181,10 +191,10 @@ export function DataTable({ companies }: DataTableProps) {
         )}
       </div>
 
-      {/* Footer with count */}
-      <div className="sticky bottom-0 bg-white border-t border-gray-200 px-6 py-3">
-        <p className="text-sm text-gray-500">
-          Visar <span className="font-medium text-gray-900">{filteredCompanies.length}</span> av {companies.length} företag
+      {/* Footer with count - Premium gradient */}
+      <div className="sticky bottom-0 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-t border-gray-700 px-6 py-4 shadow-lg">
+        <p className="text-sm text-gray-300 font-medium">
+          Visar <span className="font-bold text-white tabular-nums">{filteredCompanies.length}</span> av <span className="font-bold text-white tabular-nums">{companies.length}</span> företag
         </p>
       </div>
     </motion.div>

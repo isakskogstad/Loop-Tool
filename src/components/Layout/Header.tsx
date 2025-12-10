@@ -14,31 +14,37 @@ export function Header({ companyCount, loading }: HeaderProps) {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-[999]">
-      {/* Glass morphism background with subtle gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-white/95 via-white/90 to-white/85 backdrop-blur-md border-b border-gray-200/60 shadow-[0_1px_3px_rgba(0,0,0,0.05)]" />
+      {/* Premium glassmorphism background with gradient */}
+      <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/90 to-gray-50/95 backdrop-blur-xl border-b border-gray-200/60 shadow-[0_2px_16px_rgba(0,0,0,0.04)]" />
 
       <div className="relative max-w-screen-xl mx-auto px-4 sm:px-6 py-4">
         <div className="flex items-center justify-between gap-4">
           {/* Logo & Title */}
-          <div className="flex items-center gap-3">
-            {/* Premium logo with subtle glow */}
-            <div className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-[#0A0A0A] to-[#1A1A1A] flex items-center justify-center shadow-md group hover:shadow-lg transition-shadow">
-              <div className="w-5 h-5 rounded-full bg-[#CDFF00] shadow-[0_0_8px_rgba(205,255,0,0.5)] transition-all group-hover:shadow-[0_0_12px_rgba(205,255,0,0.7)]" />
-            </div>
+          <div className="flex items-center gap-4">
+            {/* Premium logo with glow effect */}
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+              className="relative w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0A0A0A] via-[#1A1A1A] to-[#0A0A0A] flex items-center justify-center shadow-lg group hover:shadow-xl transition-all duration-300"
+            >
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-loop-lime/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-loop-lime via-loop-lime-dark to-loop-lime shadow-[0_0_12px_rgba(205,255,0,0.6)] group-hover:shadow-[0_0_20px_rgba(205,255,0,0.8)] transition-all duration-300" />
+            </motion.div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div>
-                <h1 className="font-bold text-gray-900 text-lg leading-tight tracking-tight">
+                <h1 className="font-serif font-bold text-gray-900 text-2xl leading-tight tracking-tight">
                   Loop Data
                 </h1>
-                <p className="text-xs text-gray-500 font-medium mt-0.5">
+                <p className="text-xs text-gray-500 font-medium mt-1">
                   {loading ? (
-                    <span className="inline-flex items-center gap-1">
+                    <span className="inline-flex items-center gap-1.5">
                       <span className="inline-block w-1.5 h-1.5 rounded-full bg-gray-400 animate-pulse" />
-                      Laddar...
+                      Laddar företagsdata...
                     </span>
                   ) : (
-                    'Impact-företag i Sverige'
+                    'Impact Ecosystem Sverige'
                   )}
                 </p>
               </div>
@@ -48,12 +54,15 @@ export function Header({ companyCount, loading }: HeaderProps) {
                 <motion.div
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-lime-50 to-lime-100/50 border border-lime-200/60 shadow-sm"
+                  transition={{ delay: 0.3, duration: 0.5 }}
+                  className="hidden md:flex items-center gap-2 px-4 py-2 rounded-2xl bg-gradient-to-r from-loop-lime via-loop-lime to-loop-lime-dark shadow-md shadow-lime-200/50 border border-lime-300/30 group hover:shadow-lg hover:shadow-lime-200/60 transition-all duration-300"
                 >
-                  <div className="w-1.5 h-1.5 rounded-full bg-lime-500 shadow-[0_0_4px_rgba(132,204,22,0.6)]" />
-                  <span className="text-xs font-semibold text-lime-900 tabular-nums">
+                  <div className="w-2 h-2 rounded-full bg-loop-black shadow-[0_0_6px_rgba(10,10,10,0.8)] animate-pulse" />
+                  <span className="text-sm font-bold text-loop-black tabular-nums">
                     {companyCount.toLocaleString('sv-SE')}
+                  </span>
+                  <span className="text-xs font-semibold text-loop-black/70">
+                    företag
                   </span>
                 </motion.div>
               )}
@@ -63,13 +72,13 @@ export function Header({ companyCount, loading }: HeaderProps) {
           {/* View Toggle & Search */}
           <div className="flex items-center gap-3">
             {/* View Toggle */}
-            <div className="flex items-center bg-gray-100 rounded-xl p-1 shadow-inner">
+            <div className="flex items-center bg-gradient-to-br from-gray-100 to-gray-50 rounded-2xl p-1.5 shadow-inner border border-gray-200/40">
               <button
                 onClick={() => setViewMode('map')}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
                   viewMode === 'map'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'bg-white text-gray-900 shadow-lg shadow-gray-200/50 scale-105'
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
                 }`}
               >
                 <Map className="w-4 h-4" />
@@ -77,10 +86,10 @@ export function Header({ companyCount, loading }: HeaderProps) {
               </button>
               <button
                 onClick={() => setViewMode('table')}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
                   viewMode === 'table'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'bg-white text-gray-900 shadow-lg shadow-gray-200/50 scale-105'
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
                 }`}
               >
                 <Table2 className="w-4 h-4" />
@@ -99,16 +108,16 @@ export function Header({ companyCount, loading }: HeaderProps) {
                   className="flex items-center gap-2"
                 >
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                     <input
                       type="text"
                       placeholder="Sök företag, stad, sektor..."
                       value={filters.search}
                       onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                      className="w-64 sm:w-80 pl-10 pr-4 py-2.5 text-sm bg-white border border-gray-300 rounded-xl
-                               focus:outline-none focus:ring-2 focus:ring-lime-400/50 focus:border-lime-400
-                               shadow-sm hover:border-gray-400 transition-all
-                               placeholder:text-gray-400"
+                      className="w-64 sm:w-96 pl-12 pr-4 py-3 text-sm bg-white/90 backdrop-blur-sm border border-gray-300 rounded-2xl
+                               focus:outline-none focus:ring-2 focus:ring-loop-lime/60 focus:border-loop-lime
+                               shadow-lg hover:border-gray-400 hover:shadow-xl transition-all duration-300
+                               placeholder:text-gray-400 font-medium"
                       autoFocus
                     />
                     {filters.search && (
@@ -122,7 +131,7 @@ export function Header({ companyCount, loading }: HeaderProps) {
                       setSearchOpen(false)
                       setFilters({ ...filters, search: '' })
                     }}
-                    className="p-2.5 hover:bg-gray-100 rounded-xl transition-colors"
+                    className="p-3 hover:bg-gray-100 rounded-2xl transition-all duration-300 hover:scale-110"
                     aria-label="Stäng sök"
                   >
                     <X className="w-5 h-5 text-gray-500" />
@@ -131,14 +140,14 @@ export function Header({ companyCount, loading }: HeaderProps) {
               ) : (
                 <motion.button
                   key="search-button"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
                   onClick={() => setSearchOpen(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700
-                           bg-white hover:bg-gray-50 border border-gray-300 rounded-xl
-                           shadow-sm hover:shadow transition-all"
+                  className="flex items-center gap-2 px-5 py-3 text-sm font-semibold text-gray-700
+                           bg-white/90 backdrop-blur-sm hover:bg-white border border-gray-300 rounded-2xl
+                           shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
                 >
-                  <Search className="w-4 h-4" />
+                  <Search className="w-5 h-5" />
                   <span className="hidden sm:inline">Sök företag</span>
                 </motion.button>
               )}

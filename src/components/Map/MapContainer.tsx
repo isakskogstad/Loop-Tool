@@ -1,6 +1,7 @@
 import { MapContainer as LeafletMap, TileLayer, ZoomControl } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import { CompanyMarker } from './CompanyMarker'
+import { FloatingStats } from './FloatingStats'
 import type { CompanyWithCoords } from '../../lib/supabase'
 import { useMapContext } from '../../context/MapContext'
 import L from 'leaflet'
@@ -60,36 +61,41 @@ export function MapView({ companies }: MapContainerProps) {
   })
 
   return (
-    <LeafletMap
-      center={SWEDEN_CENTER}
-      zoom={5}
-      minZoom={4}
-      maxZoom={18}
-      maxBounds={SWEDEN_BOUNDS}
-      maxBoundsViscosity={1.0}
-      zoomControl={false}
-      className="w-full h-full"
-    >
-      {/* Light minimalist tile layer - CartoDB Positron */}
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-      />
-
-      <ZoomControl position="bottomright" />
-
-      <MarkerClusterGroup
-        chunkedLoading
-        iconCreateFunction={createClusterIcon}
-        maxClusterRadius={60}
-        spiderfyOnMaxZoom={true}
-        showCoverageOnHover={false}
-        animate={true}
+    <div className="relative w-full h-full">
+      <LeafletMap
+        center={SWEDEN_CENTER}
+        zoom={5}
+        minZoom={4}
+        maxZoom={18}
+        maxBounds={SWEDEN_BOUNDS}
+        maxBoundsViscosity={1.0}
+        zoomControl={false}
+        className="w-full h-full"
       >
-        {filteredCompanies.map(company => (
-          <CompanyMarker key={company.orgnr} company={company} />
-        ))}
-      </MarkerClusterGroup>
-    </LeafletMap>
+        {/* Light minimalist tile layer - CartoDB Positron */}
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+        />
+
+        <ZoomControl position="bottomright" />
+
+        <MarkerClusterGroup
+          chunkedLoading
+          iconCreateFunction={createClusterIcon}
+          maxClusterRadius={60}
+          spiderfyOnMaxZoom={true}
+          showCoverageOnHover={false}
+          animate={true}
+        >
+          {filteredCompanies.map(company => (
+            <CompanyMarker key={company.orgnr} company={company} />
+          ))}
+        </MarkerClusterGroup>
+      </LeafletMap>
+
+      {/* Floating Stats Panel */}
+      <FloatingStats companies={filteredCompanies} filteredCount={filteredCompanies.length} />
+    </div>
   )
 }
