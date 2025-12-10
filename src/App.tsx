@@ -3,6 +3,7 @@ import { MapView } from './components/Map/MapContainer'
 import { DataTable } from './components/Data/DataTable'
 import { CompanyPanel } from './components/Company/CompanyPanel'
 import { Header } from './components/Layout/Header'
+import { Footer } from './components/Layout/Footer'
 import { StatsBar } from './components/Stats/StatsBar'
 import { useCompanies } from './hooks/useCompanies'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -107,7 +108,7 @@ function MapApp() {
         {loading && <LoadingScreen />}
       </AnimatePresence>
 
-      <div className="h-screen w-screen overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100">
+      <div className="min-h-screen w-screen overflow-x-hidden bg-gradient-to-b from-gray-50 to-gray-100 flex flex-col">
         {/* Header */}
         <Header companyCount={companies.length} loading={loading} />
 
@@ -116,34 +117,39 @@ function MapApp() {
           <StatsBar companies={companies} loading={loading} />
         </div>
 
-        {/* Main Content - Map or Table */}
-        <main className="h-[calc(100vh-76px-180px)]">
-          <AnimatePresence mode="wait">
-            {viewMode === 'map' ? (
-              <motion.div
-                key="map"
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.3 }}
-                className="h-full"
-              >
-                <MapView companies={companies} />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="table"
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.3 }}
-                className="h-full"
-              >
-                <DataTable companies={companies} />
-              </motion.div>
-            )}
-          </AnimatePresence>
+        {/* Main Content - Map or Table with margins */}
+        <main className="flex-1 px-4 sm:px-6 lg:px-8 pb-6">
+          <div className="max-w-screen-2xl mx-auto h-full">
+            <AnimatePresence mode="wait">
+              {viewMode === 'map' ? (
+                <motion.div
+                  key="map"
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.3 }}
+                  className="h-[65vh] min-h-[500px] rounded-2xl overflow-hidden shadow-xl border border-gray-200/60"
+                >
+                  <MapView companies={companies} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="table"
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.3 }}
+                  className="h-[65vh] min-h-[500px] rounded-2xl overflow-hidden shadow-xl border border-gray-200/60"
+                >
+                  <DataTable companies={companies} />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </main>
+
+        {/* Footer */}
+        <Footer />
 
         {/* Company Detail Panel */}
         <CompanyPanel />
