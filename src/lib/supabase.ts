@@ -97,3 +97,83 @@ export async function fetchTopCompanies(limit = 10) {
   if (error) throw error
   return data || []
 }
+
+// Map data types
+export interface CompanyWithCoords {
+  orgnr: string
+  name: string
+  latitude: number
+  longitude: number
+  city: string | null
+  county: string | null
+  logo_url: string | null
+  sector: string | null
+  turnover_2024_sek: number | null
+  total_funding_sek: number | null
+  latest_valuation_sek: number | null
+  growth_2023_2024_percent: number | null
+  foundation_date: string | null
+  ceo_contact: string | null
+  investment_status: string | null
+}
+
+export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
+  // Join companies (with coords) and loop_table (with financials)
+  const { data, error } = await supabase
+    .from('companies')
+    .select(`
+      orgnr,
+      name,
+      latitude,
+      longitude,
+      city,
+      county,
+      logo_url
+    `)
+    .not('latitude', 'is', null)
+    .not('longitude', 'is', null)
+
+  if (error) throw error
+
+  // Get loop_table data for enrichment
+  const { data: loopData, error: loopError } = await supabase
+    .from('loop_table')
+    .select(`
+      orgnr,
+      sector,
+      turnover_2024_sek,
+      total_funding_sek,
+      latest_valuation_sek,
+      growth_2023_2024_percent,
+      foundation_date,
+      ceo_contact,
+      investment_status
+    `)
+
+  if (loopError) throw loopError
+
+  // Create lookup map for loop_table data
+  const loopMap = new Map(loopData?.map(l => [l.orgnr, l]) || [])
+
+  // Merge data
+  return (data || []).map(company => {
+    const loopInfo = loopMap.get(company.orgnr)
+    return {
+      orgnr: company.orgnr,
+      name: company.name,
+      latitude: parseFloat(company.latitude),
+      longitude: parseFloat(company.longitude),
+      city: company.city,
+      county: company.county,
+      logo_url: company.logo_url,
+      sector: loopInfo?.sector || null,
+      turnover_2024_sek: loopInfo?.turnover_2024_sek || null,
+      total_funding_sek: loopInfo?.total_funding_sek || null,
+      latest_valuation_sek: loopInfo?.latest_valuation_sek || null,
+      growth_2023_2024_percent: loopInfo?.growth_2023_2024_percent || null,
+      foundation_date: loopInfo?.foundation_date || null,
+      ceo_contact: loopInfo?.ceo_contact || null,
+      investment_status: loopInfo?.investment_status || null,
+    }
+  })
+}
