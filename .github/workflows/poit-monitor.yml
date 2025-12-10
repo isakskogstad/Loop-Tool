@@ -19,7 +19,7 @@ on:
       debug:
         description: 'Debug-läge'
         type: boolean
-        default: false
+        default: true
 
 env:
   SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -30,6 +30,9 @@ jobs:
   poit-sync:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: poit-monitor
     
     steps:
       - name: Checkout
@@ -40,13 +43,14 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'pip'
+          cache-dependency-path: poit-monitor/requirements.txt
 
       - name: Install dependencies
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Install Chrome
+      - name: Install Chrome and xvfb
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser xvfb
@@ -70,7 +74,7 @@ jobs:
         with:
           name: poit-sync-logs
           path: |
-            *.log
+            poit-monitor/*.log
             /tmp/*.png
           retention-days: 7
 
@@ -82,4 +86,4 @@ jobs:
       - name: Send failure notification
         run: |
           echo "POIT Sync failed at $(date)"
-          # Här kan man lägga till Slack/Discord notification
+          # TODO: Lägg till Slack/Discord notification
