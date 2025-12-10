@@ -1771,6 +1771,139 @@ async def reject_request(token: str, secret: str = Query(...)):
     """)
 
 
+# ==================== NEWS API ====================
+
+class NewsArticle(BaseModel):
+    title: str
+    url: str
+    source: str
+    summary: Optional[str] = None
+    published_at: Optional[str] = None
+    image_url: Optional[str] = None
+
+
+@app.get("/api/v1/news/search/{company_name}", tags=["News"])
+@limiter.limit(RATE_LIMIT_DEFAULT)
+async def search_company_news(
+    request: Request,
+    company_name: str = Path(..., description="Företagsnamn att söka nyheter för"),
+    limit: int = Query(10, ge=1, le=50, description="Max antal nyheter")
+):
+    """
+    Sök efter nyheter om ett specifikt företag.
+
+    Söker i svenska och internationella nyhetskällor efter artiklar
+    som nämner företaget. Använder RSS-feeds och keyword-filtrering.
+
+    **Källor:**
+    - Breakit, Realtid, Ny Teknik, DI (svenska)
+    - TechCrunch, Wired, BBC Tech/Business (internationella)
+    """
+    try:
+        from .news_client import SwedishNewsClient
+
+        client = SwedishNewsClient()
+
+        # Search for articles mentioning the company
+        articles = client.search_news(company_name, limit=limit)
+
+        return {
+            "foretag": company_name,
+            "antal": len(articles),
+            "nyheter": [
+                {
+                    "titel": a.title,
+                    "url": a.url,
+                    "kalla": a.source,
+                    "sammanfattning": getattr(a, 'summary', None),
+                    "publicerad": getattr(a, 'published_at', None),
+                    "bild_url": getattr(a, 'image_url', None)
+                }
+                for a in articles
+            ]
+        }
+    except ImportError:
+        raise HTTPException(status_code=501, detail="News client not available")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Kunde inte hämta nyheter: {str(e)}")
+
+
+@app.get("/api/v1/news/latest", tags=["News"])
+@limiter.limit(RATE_LIMIT_DEFAULT)
+async def get_latest_news(
+    request: Request,
+    source: Optional[str] = Query(None, description="Källa: breakit, realtid, di, nyteknik, techcrunch, wired, bbc-tech"),
+    limit: int = Query(20, ge=1, le=100, description="Max antal nyheter")
+):
+    """
+    Hämta senaste nyheterna från svenska och internationella källor.
+
+    **Svenska källor:**
+    - `breakit` - Tech och startups
+    - `realtid` - Finans och affärer
+    - `di` - Dagens Industri
+    - `nyteknik` - Teknisk utveckling
+
+    **Internationella källor (impact-filtrerade):**
+    - `techcrunch` - TechCrunch Startups
+    - `wired` - Wired Technology
+    - `bbc-tech` - BBC Technology
+    - `bbc-business` - BBC Business
+    """
+    try:
+        from .news_client import SwedishNewsClient
+
+        client = SwedishNewsClient()
+
+        if source:
+            articles = client.get_latest(source, limit=limit)
+        else:
+            # Get from multiple sources
+            articles = client.get_latest(['breakit', 'realtid', 'techcrunch'], limit=limit)
+
+        return {
+            "kalla": source or "mixed",
+            "antal": len(articles),
+            "nyheter": [
+                {
+                    "titel": a.title,
+                    "url": a.url,
+                    "kalla": a.source,
+                    "sammanfattning": getattr(a, 'summary', None),
+                    "publicerad": getattr(a, 'published_at', None)
+                }
+                for a in articles
+            ]
+        }
+    except ImportError:
+        raise HTTPException(status_code=501, detail="News client not available")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Kunde inte hämta nyheter: {str(e)}")
+
+
+@app.get("/api/v1/news/sources", tags=["News"])
+@limiter.limit(RATE_LIMIT_DEFAULT)
+async def list_news_sources(request: Request):
+    """
+    Lista alla tillgängliga nyhetskällor.
+    """
+    return {
+        "svenska": [
+            {"id": "breakit", "namn": "Breakit", "typ": "Tech/Startups", "rss": True},
+            {"id": "realtid", "namn": "Realtid", "typ": "Finans", "rss": True},
+            {"id": "di", "namn": "Dagens Industri", "typ": "Affärer", "rss": False},
+            {"id": "nyteknik", "namn": "Ny Teknik", "typ": "Tech", "rss": False},
+            {"id": "svd", "namn": "SvD Näringsliv", "typ": "Affärer", "rss": False}
+        ],
+        "internationella": [
+            {"id": "techcrunch", "namn": "TechCrunch", "typ": "Tech/Startups", "rss": True, "impact_filter": True},
+            {"id": "wired", "namn": "Wired", "typ": "Tech/Innovation", "rss": True, "impact_filter": True},
+            {"id": "bbc-tech", "namn": "BBC Technology", "typ": "Tech News", "rss": True, "impact_filter": True},
+            {"id": "bbc-business", "namn": "BBC Business", "typ": "Business/Finance", "rss": True, "impact_filter": True}
+        ]
+    }
+
+
 # ==================== ERROR HANDLERS ====================
 
 def generate_request_id() -> str:

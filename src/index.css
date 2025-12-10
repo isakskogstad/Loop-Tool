@@ -331,3 +331,101 @@ body {
 .leaflet-popup-tip {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+/* Logo Marker Styles */
+.custom-logo-marker,
+.custom-initial-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.company-logo-marker,
+.company-initial-marker {
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.company-logo-marker:hover,
+.company-initial-marker:hover {
+  transform: scale(1.15) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3) !important;
+  z-index: 10000 !important;
+}
+
+.company-logo-marker.selected,
+.company-initial-marker.selected {
+  transform: scale(1.2) !important;
+  box-shadow: 0 8px 30px rgba(205, 255, 0, 0.5) !important;
+  z-index: 20000 !important;
+}
+
+/* Modern Tooltip - Company Info Card */
+.leaflet-tooltip.company-tooltip-modern {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-family: 'Inter', system-ui, sans-serif;
+  animation: tooltip-slide-up 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.leaflet-tooltip.company-tooltip-modern::before {
+  display: none;
+}
+
+@keyframes tooltip-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hide attribution completely */
+.leaflet-control-attribution {
+  display: none !important;
+}
+
+/* Smooth map interactions */
+.leaflet-container {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.leaflet-zoom-anim .leaflet-zoom-animated {
+  will-change: transform;
+}
+
+.leaflet-marker-icon {
+  will-change: transform;
+}
+
+/* Hardware accelerated transitions */
+.leaflet-fade-anim .leaflet-popup {
+  transition: opacity 0.2s linear;
+}
+
+/* Make map smoother */
+.leaflet-tile-container img {
+  will-change: transform, opacity;
+}
+
+/* Cluster hover effects */
+.marker-cluster {
+  will-change: transform;
+}
+
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  transition: transform 0.2s ease;
+}
+
+.marker-cluster:hover {
+  transform: scale(1.1);
+}

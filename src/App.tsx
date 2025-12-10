@@ -4,9 +4,10 @@ import { DataTable } from './components/Data/DataTable'
 import { CompanyModal } from './components/Company/CompanyModal'
 import { Header } from './components/Layout/Header'
 import { Footer } from './components/Layout/Footer'
-import { StatsBar } from './components/Stats/StatsBar'
+import { EventLog } from './components/Layout/EventLog'
 import { useCompanies } from './hooks/useCompanies'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Map, Table2 } from 'lucide-react'
 
 function LoadingScreen() {
   return (
@@ -105,6 +106,57 @@ function LoadingScreen() {
   )
 }
 
+// View Toggle Component
+function ViewToggle() {
+  const { viewMode, setViewMode } = useMapContext()
+
+  return (
+    <div className="flex justify-center py-4 bg-gray-50 border-t border-gray-200">
+      <div className="inline-flex items-center bg-white rounded-2xl p-1.5 shadow-lg border border-gray-200">
+        <button
+          onClick={() => setViewMode('map')}
+          className={`relative flex items-center gap-3 px-8 py-3.5 rounded-xl text-base font-semibold transition-all duration-300 ${
+            viewMode === 'map'
+              ? 'text-gray-900'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          {viewMode === 'map' && (
+            <motion.div
+              layoutId="viewToggleBackground"
+              className="absolute inset-0 bg-loop-lime rounded-xl shadow-md"
+              initial={false}
+              transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+            />
+          )}
+          <Map className="w-5 h-5 relative z-10" />
+          <span className="relative z-10">Karta</span>
+        </button>
+
+        <button
+          onClick={() => setViewMode('table')}
+          className={`relative flex items-center gap-3 px-8 py-3.5 rounded-xl text-base font-semibold transition-all duration-300 ${
+            viewMode === 'table'
+              ? 'text-gray-900'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          {viewMode === 'table' && (
+            <motion.div
+              layoutId="viewToggleBackground"
+              className="absolute inset-0 bg-loop-lime rounded-xl shadow-md"
+              initial={false}
+              transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+            />
+          )}
+          <Table2 className="w-5 h-5 relative z-10" />
+          <span className="relative z-10">Tabell</span>
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function MapApp() {
   const { companies, loading, error } = useCompanies()
   const { viewMode } = useMapContext()
@@ -138,19 +190,16 @@ function MapApp() {
       </AnimatePresence>
 
       {/* Centered showcase container */}
-      <div className="min-h-screen w-screen bg-gray-100 flex flex-col items-center justify-center p-4 sm:p-8">
+      <div className="min-h-screen w-screen bg-gray-100 flex flex-col items-center p-4 sm:p-6 lg:p-8">
         {/* Main tool container - centered widget */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="w-full max-w-7xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200"
+          className="w-full max-w-[1600px] bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200"
         >
           {/* Integrated Header - part of the widget */}
-          <Header companyCount={companies.length} loading={loading} />
-
-          {/* Stats Bar */}
-          <StatsBar companies={companies} loading={loading} />
+          <Header />
 
           {/* Main Content - Map or Table */}
           <div className="relative">
@@ -158,22 +207,22 @@ function MapApp() {
               {viewMode === 'map' ? (
                 <motion.div
                   key="map"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="h-[60vh] min-h-[450px]"
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                  className="h-[70vh] min-h-[500px]"
                 >
                   <MapView companies={companies} />
                 </motion.div>
               ) : (
                 <motion.div
                   key="table"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="h-[60vh] min-h-[450px]"
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                  className="h-[70vh] min-h-[500px]"
                 >
                   <DataTable companies={companies} />
                 </motion.div>
@@ -181,12 +230,18 @@ function MapApp() {
             </AnimatePresence>
           </div>
 
+          {/* View Toggle - Below Content */}
+          <ViewToggle />
+
           {/* Footer integrated into widget */}
           <Footer />
         </motion.div>
 
         {/* Company Detail Modal */}
         <CompanyModal />
+
+        {/* Event Log - Bottom Right */}
+        <EventLog />
       </div>
     </>
   )

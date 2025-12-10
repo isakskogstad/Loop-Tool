@@ -1,9 +1,10 @@
-import { MapContainer as LeafletMap, TileLayer, ZoomControl } from 'react-leaflet'
+import { MapContainer as LeafletMap, TileLayer, ZoomControl, useMapEvents } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import { CompanyMarker } from './CompanyMarker'
-import { FloatingStats } from './FloatingStats'
+import { ViewportList } from './ViewportList'
 import type { CompanyWithCoords } from '../../lib/supabase'
 import { useMapContext } from '../../context/MapContext'
+import { useState, useCallback } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
@@ -41,8 +42,55 @@ const createClusterIcon = (cluster: any) => {
   })
 }
 
+// Component to track map bounds
+interface MapBounds {
+  north: number
+  south: number
+  east: number
+  west: number
+}
+
+function MapBoundsTracker({ onBoundsChange }: { onBoundsChange: (bounds: MapBounds) => void }) {
+  const map = useMapEvents({
+    moveend: () => {
+      const bounds = map.getBounds()
+      onBoundsChange({
+        north: bounds.getNorth(),
+        south: bounds.getSouth(),
+        east: bounds.getEast(),
+        west: bounds.getWest(),
+      })
+    },
+    zoomend: () => {
+      const bounds = map.getBounds()
+      onBoundsChange({
+        north: bounds.getNorth(),
+        south: bounds.getSouth(),
+        east: bounds.getEast(),
+        west: bounds.getWest(),
+      })
+    },
+    load: () => {
+      const bounds = map.getBounds()
+      onBoundsChange({
+        north: bounds.getNorth(),
+        south: bounds.getSouth(),
+        east: bounds.getEast(),
+        west: bounds.getWest(),
+      })
+    },
+  })
+
+  return null
+}
+
 export function MapView({ companies }: MapContainerProps) {
   const { filters } = useMapContext()
+  const [mapBounds, setMapBounds] = useState<MapBounds | null>(null)
+
+  const handleBoundsChange = useCallback((bounds: MapBounds) => {
+    setMapBounds(bounds)
+  }, [])
 
   // Filter companies based on search, sector, AND valid coordinates
   const filteredCompanies = companies.filter(company => {
@@ -77,10 +125,13 @@ export function MapView({ companies }: MapContainerProps) {
         zoomControl={false}
         className="w-full h-full"
       >
-        {/* Light minimalist tile layer - CartoDB Positron */}
+        {/* Track map bounds */}
+        <MapBoundsTracker onBoundsChange={handleBoundsChange} />
+
+        {/* Light minimalist tile layer - CartoDB Positron (no attribution overlay) */}
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+          attribution=""
+          url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
         />
 
         <ZoomControl position="bottomright" />
@@ -99,8 +150,8 @@ export function MapView({ companies }: MapContainerProps) {
         </MarkerClusterGroup>
       </LeafletMap>
 
-      {/* Floating Stats Panel */}
-      <FloatingStats companies={filteredCompanies} filteredCount={filteredCompanies.length} />
+      {/* Viewport Company List */}
+      <ViewportList companies={filteredCompanies} mapBounds={mapBounds} />
     </div>
   )
 }
