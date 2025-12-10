@@ -1,5 +1,6 @@
-import { MapProvider } from './context/MapContext'
+import { MapProvider, useMapContext } from './context/MapContext'
 import { MapView } from './components/Map/MapContainer'
+import { DataTable } from './components/Data/DataTable'
 import { CompanyPanel } from './components/Company/CompanyPanel'
 import { Header } from './components/Layout/Header'
 import { useCompanies } from './hooks/useCompanies'
@@ -33,6 +34,7 @@ function LoadingScreen() {
 
 function MapApp() {
   const { companies, loading, error } = useCompanies()
+  const { viewMode } = useMapContext()
 
   if (error) {
     return (
@@ -64,9 +66,33 @@ function MapApp() {
         {/* Header */}
         <Header companyCount={companies.length} loading={loading} />
 
-        {/* Map */}
+        {/* Main Content - Map or Table */}
         <main className="pt-[60px] h-full">
-          <MapView companies={companies} />
+          <AnimatePresence mode="wait">
+            {viewMode === 'map' ? (
+              <motion.div
+                key="map"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="h-full"
+              >
+                <MapView companies={companies} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="table"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="h-full"
+              >
+                <DataTable companies={companies} />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </main>
 
         {/* Company Detail Panel */}
