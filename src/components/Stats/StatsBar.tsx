@@ -37,7 +37,7 @@ function useAnimatedCounter(value: number, duration: number = 2000) {
   return count
 }
 
-// Hero stat component - larger and more prominent
+// Hero stat component - larger and more prominent (light theme for showcase)
 function HeroStat({ value, label, suffix = '', icon }: { value: number; label: string; suffix?: string; icon: React.ReactNode }) {
   const animatedValue = useAnimatedCounter(value)
 
@@ -46,26 +46,23 @@ function HeroStat({ value, label, suffix = '', icon }: { value: number; label: s
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className="relative bg-gradient-to-br from-loop-black via-gray-900 to-loop-black rounded-3xl p-6 text-white overflow-hidden group"
+      className="relative bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-5 text-white overflow-hidden group"
     >
-      {/* Animated gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-loop-lime/10 via-transparent to-primary-blue/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-      {/* Glow effect */}
-      <div className="absolute -top-20 -right-20 w-40 h-40 bg-loop-lime/20 rounded-full blur-3xl" />
+      {/* Subtle accent line */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-loop-lime to-teal-400" />
 
       <div className="relative">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="p-2 bg-loop-lime/20 rounded-xl">
+        <div className="flex items-center gap-2 mb-2">
+          <div className="p-1.5 bg-loop-lime/20 rounded-lg">
             {icon}
           </div>
-          <span className="text-sm font-semibold text-gray-400 uppercase tracking-wider">{label}</span>
+          <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider">{label}</span>
         </div>
         <div className="flex items-baseline gap-2">
-          <span className="text-5xl sm:text-6xl font-bold tabular-nums bg-gradient-to-r from-loop-lime via-white to-loop-lime bg-clip-text text-transparent">
+          <span className="text-4xl sm:text-5xl font-bold tabular-nums text-loop-lime">
             {animatedValue.toLocaleString('sv-SE')}
           </span>
-          {suffix && <span className="text-2xl font-semibold text-gray-400">{suffix}</span>}
+          {suffix && <span className="text-lg font-semibold text-gray-400">{suffix}</span>}
         </div>
       </div>
     </motion.div>

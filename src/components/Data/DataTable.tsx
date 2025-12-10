@@ -54,9 +54,9 @@ export function DataTable({ companies }: DataTableProps) {
       return <ChevronsUpDown className="w-3.5 h-3.5 text-gray-400" />
     }
     if (sortDirection === 'asc') {
-      return <ChevronUp className="w-3.5 h-3.5 text-loop-lime" />
+      return <ChevronUp className="w-3.5 h-3.5 text-primary-blue" />
     }
-    return <ChevronDown className="w-3.5 h-3.5 text-loop-lime" />
+    return <ChevronDown className="w-3.5 h-3.5 text-primary-blue" />
   }
 
   // Filter and sort companies
@@ -119,48 +119,48 @@ export function DataTable({ companies }: DataTableProps) {
       className="h-full overflow-auto bg-gradient-to-b from-white to-gray-50"
     >
       <div className="min-w-[900px]">
-        {/* Table Header - Premium sticky with glassmorphism */}
-        <div className="sticky top-0 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-b border-gray-700 z-10 shadow-lg">
-          <div className="grid grid-cols-12 gap-4 px-6 py-4 text-xs font-bold text-white uppercase tracking-wider">
+        {/* Table Header - Light theme for showcase */}
+        <div className="sticky top-0 bg-white border-b-2 border-gray-200 z-10 shadow-sm">
+          <div className="grid grid-cols-12 gap-4 px-6 py-4 text-xs font-bold text-gray-600 uppercase tracking-wider">
             <button
               onClick={() => handleSort('name')}
-              className="col-span-3 flex items-center gap-1.5 hover:text-loop-lime transition-colors text-left"
+              className="col-span-3 flex items-center gap-1.5 hover:text-gray-900 transition-colors text-left"
             >
               Företag {getSortIcon('name')}
             </button>
             <button
               onClick={() => handleSort('sector')}
-              className="col-span-2 flex items-center gap-1.5 hover:text-loop-lime transition-colors text-left"
+              className="col-span-2 flex items-center gap-1.5 hover:text-gray-900 transition-colors text-left"
             >
               Sektor {getSortIcon('sector')}
             </button>
             <button
               onClick={() => handleSort('turnover')}
-              className="col-span-1 flex items-center justify-end gap-1.5 hover:text-loop-lime transition-colors"
+              className="col-span-1 flex items-center justify-end gap-1.5 hover:text-gray-900 transition-colors"
             >
               Omsättning {getSortIcon('turnover')}
             </button>
             <button
               onClick={() => handleSort('growth')}
-              className="col-span-1 flex items-center justify-end gap-1.5 hover:text-loop-lime transition-colors"
+              className="col-span-1 flex items-center justify-end gap-1.5 hover:text-gray-900 transition-colors"
             >
               Tillväxt {getSortIcon('growth')}
             </button>
             <button
               onClick={() => handleSort('funding')}
-              className="col-span-1 flex items-center justify-end gap-1.5 hover:text-loop-lime transition-colors"
+              className="col-span-1 flex items-center justify-end gap-1.5 hover:text-gray-900 transition-colors"
             >
               Funding {getSortIcon('funding')}
             </button>
             <button
               onClick={() => handleSort('valuation')}
-              className="col-span-1 flex items-center justify-end gap-1.5 hover:text-loop-lime transition-colors"
+              className="col-span-1 flex items-center justify-end gap-1.5 hover:text-gray-900 transition-colors"
             >
               Värdering {getSortIcon('valuation')}
             </button>
             <button
               onClick={() => handleSort('city')}
-              className="col-span-2 flex items-center gap-1.5 hover:text-loop-lime transition-colors text-left"
+              className="col-span-2 flex items-center gap-1.5 hover:text-gray-900 transition-colors text-left"
             >
               Plats {getSortIcon('city')}
             </button>
@@ -297,15 +297,15 @@ export function DataTable({ companies }: DataTableProps) {
         )}
       </div>
 
-      {/* Footer with count - Premium gradient */}
-      <div className="sticky bottom-0 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-t border-gray-700 px-6 py-4 shadow-lg">
+      {/* Footer with count - Light theme */}
+      <div className="sticky bottom-0 bg-white border-t-2 border-gray-200 px-6 py-4 shadow-sm">
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-300 font-medium">
-            Visar <span className="font-bold text-white tabular-nums">{sortedAndFilteredCompanies.length}</span> av <span className="font-bold text-white tabular-nums">{companies.length}</span> företag
+          <p className="text-sm text-gray-600 font-medium">
+            Visar <span className="font-bold text-gray-900 tabular-nums">{sortedAndFilteredCompanies.length}</span> av <span className="font-bold text-gray-900 tabular-nums">{companies.length}</span> företag
           </p>
           {sortField && (
-            <p className="text-xs text-gray-400">
-              Sorterat på: <span className="text-loop-lime font-semibold">{sortField}</span> ({sortDirection === 'asc' ? '↑' : '↓'})
+            <p className="text-xs text-gray-500">
+              Sorterat på: <span className="text-primary-blue font-semibold">{sortField}</span> ({sortDirection === 'asc' ? '↑' : '↓'})
             </p>
           )}
         </div>
