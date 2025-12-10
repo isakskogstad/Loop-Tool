@@ -1,11 +1,15 @@
 import { motion } from 'framer-motion'
-import { TrendingUp, TrendingDown, MapPin, ExternalLink } from 'lucide-react'
+import { TrendingUp, TrendingDown, MapPin, ExternalLink, ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react'
 import type { CompanyWithCoords } from '../../lib/supabase'
 import { useMapContext } from '../../context/MapContext'
+import { useState, useMemo } from 'react'
 
 interface DataTableProps {
   companies: CompanyWithCoords[]
 }
+
+type SortField = 'name' | 'sector' | 'turnover' | 'growth' | 'funding' | 'valuation' | 'city'
+type SortDirection = 'asc' | 'desc' | null
 
 function formatCurrency(value: number | null): string {
   if (!value) return '-'
@@ -25,20 +29,87 @@ function formatPercent(value: number | null): string {
 
 export function DataTable({ companies }: DataTableProps) {
   const { filters, setSelectedCompany } = useMapContext()
+  const [sortField, setSortField] = useState<SortField | null>(null)
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null)
 
-  // Filter companies based on search
-  const filteredCompanies = companies.filter(company => {
-    if (filters.sector && company.sector !== filters.sector) return false
-    if (filters.search) {
-      const search = filters.search.toLowerCase()
-      return (
-        company.name.toLowerCase().includes(search) ||
-        company.city?.toLowerCase().includes(search) ||
-        company.sector?.toLowerCase().includes(search)
-      )
+  // Handle sort click
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      // Cycle through: asc -> desc -> null
+      if (sortDirection === 'asc') {
+        setSortDirection('desc')
+      } else if (sortDirection === 'desc') {
+        setSortField(null)
+        setSortDirection(null)
+      }
+    } else {
+      setSortField(field)
+      setSortDirection('asc')
     }
-    return true
-  })
+  }
+
+  // Get sort icon for column
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <ChevronsUpDown className="w-3.5 h-3.5 text-gray-400" />
+    }
+    if (sortDirection === 'asc') {
+      return <ChevronUp className="w-3.5 h-3.5 text-loop-lime" />
+    }
+    return <ChevronDown className="w-3.5 h-3.5 text-loop-lime" />
+  }
+
+  // Filter and sort companies
+  const sortedAndFilteredCompanies = useMemo(() => {
+    // First filter
+    let result = companies.filter(company => {
+      if (filters.sector && company.sector !== filters.sector) return false
+      if (filters.search) {
+        const search = filters.search.toLowerCase()
+        return (
+          company.name.toLowerCase().includes(search) ||
+          company.city?.toLowerCase().includes(search) ||
+          company.sector?.toLowerCase().includes(search)
+        )
+      }
+      return true
+    })
+
+    // Then sort if a sort field is selected
+    if (sortField && sortDirection) {
+      result = [...result].sort((a, b) => {
+        let comparison = 0
+
+        switch (sortField) {
+          case 'name':
+            comparison = a.name.localeCompare(b.name, 'sv')
+            break
+          case 'sector':
+            comparison = (a.sector || '').localeCompare(b.sector || '', 'sv')
+            break
+          case 'turnover':
+            comparison = (a.turnover_2024_sek || 0) - (b.turnover_2024_sek || 0)
+            break
+          case 'growth':
+            comparison = (a.growth_2023_2024_percent || -Infinity) - (b.growth_2023_2024_percent || -Infinity)
+            break
+          case 'funding':
+            comparison = (a.total_funding_sek || 0) - (b.total_funding_sek || 0)
+            break
+          case 'valuation':
+            comparison = (a.latest_valuation_sek || 0) - (b.latest_valuation_sek || 0)
+            break
+          case 'city':
+            comparison = (a.city || '').localeCompare(b.city || '', 'sv')
+            break
+        }
+
+        return sortDirection === 'asc' ? comparison : -comparison
+      })
+    }
+
+    return result
+  }, [companies, filters.sector, filters.search, sortField, sortDirection])
 
   return (
     <motion.div
@@ -51,20 +122,55 @@ export function DataTable({ companies }: DataTableProps) {
         {/* Table Header - Premium sticky with glassmorphism */}
         <div className="sticky top-0 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-b border-gray-700 z-10 shadow-lg">
           <div className="grid grid-cols-12 gap-4 px-6 py-4 text-xs font-bold text-white uppercase tracking-wider">
-            <div className="col-span-3">Företag</div>
-            <div className="col-span-2">Sektor</div>
-            <div className="col-span-1 text-right">Omsättning</div>
-            <div className="col-span-1 text-right">Tillväxt</div>
-            <div className="col-span-1 text-right">Funding</div>
-            <div className="col-span-1 text-right">Värdering</div>
-            <div className="col-span-2">Plats</div>
+            <button
+              onClick={() => handleSort('name')}
+              className="col-span-3 flex items-center gap-1.5 hover:text-loop-lime transition-colors text-left"
+            >
+              Företag {getSortIcon('name')}
+            </button>
+            <button
+              onClick={() => handleSort('sector')}
+              className="col-span-2 flex items-center gap-1.5 hover:text-loop-lime transition-colors text-left"
+            >
+              Sektor {getSortIcon('sector')}
+            </button>
+            <button
+              onClick={() => handleSort('turnover')}
+              className="col-span-1 flex items-center justify-end gap-1.5 hover:text-loop-lime transition-colors"
+            >
+              Omsättning {getSortIcon('turnover')}
+            </button>
+            <button
+              onClick={() => handleSort('growth')}
+              className="col-span-1 flex items-center justify-end gap-1.5 hover:text-loop-lime transition-colors"
+            >
+              Tillväxt {getSortIcon('growth')}
+            </button>
+            <button
+              onClick={() => handleSort('funding')}
+              className="col-span-1 flex items-center justify-end gap-1.5 hover:text-loop-lime transition-colors"
+            >
+              Funding {getSortIcon('funding')}
+            </button>
+            <button
+              onClick={() => handleSort('valuation')}
+              className="col-span-1 flex items-center justify-end gap-1.5 hover:text-loop-lime transition-colors"
+            >
+              Värdering {getSortIcon('valuation')}
+            </button>
+            <button
+              onClick={() => handleSort('city')}
+              className="col-span-2 flex items-center gap-1.5 hover:text-loop-lime transition-colors text-left"
+            >
+              Plats {getSortIcon('city')}
+            </button>
             <div className="col-span-1"></div>
           </div>
         </div>
 
         {/* Table Body - Zebra striping with gradients */}
         <div className="divide-y divide-gray-100">
-          {filteredCompanies.map((company, index) => (
+          {sortedAndFilteredCompanies.map((company, index) => (
             <motion.div
               key={company.orgnr}
               initial={{ opacity: 0, y: 10 }}
@@ -181,7 +287,7 @@ export function DataTable({ companies }: DataTableProps) {
         </div>
 
         {/* Empty State */}
-        {filteredCompanies.length === 0 && (
+        {sortedAndFilteredCompanies.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 text-gray-500">
             <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-4">
               <MapPin className="w-6 h-6 text-gray-400" />
@@ -193,9 +299,16 @@ export function DataTable({ companies }: DataTableProps) {
 
       {/* Footer with count - Premium gradient */}
       <div className="sticky bottom-0 bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-t border-gray-700 px-6 py-4 shadow-lg">
-        <p className="text-sm text-gray-300 font-medium">
-          Visar <span className="font-bold text-white tabular-nums">{filteredCompanies.length}</span> av <span className="font-bold text-white tabular-nums">{companies.length}</span> företag
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-gray-300 font-medium">
+            Visar <span className="font-bold text-white tabular-nums">{sortedAndFilteredCompanies.length}</span> av <span className="font-bold text-white tabular-nums">{companies.length}</span> företag
+          </p>
+          {sortField && (
+            <p className="text-xs text-gray-400">
+              Sorterat på: <span className="text-loop-lime font-semibold">{sortField}</span> ({sortDirection === 'asc' ? '↑' : '↓'})
+            </p>
+          )}
+        </div>
       </div>
     </motion.div>
   )
