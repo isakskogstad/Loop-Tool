@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ChevronDown, RefreshCw, Database, FileText, CheckCircle } from 'lucide-react'
+import { ChevronDown, RefreshCw, Database, FileText, CheckCircle, Activity, Zap } from 'lucide-react'
 
 interface EventItem {
   id: string
@@ -47,29 +47,29 @@ const getEventIcon = (type: EventItem['type']) => {
   }
 }
 
-const getEventIconClass = (type: EventItem['type']) => {
+const getEventColors = (type: EventItem['type']) => {
   switch (type) {
-    case 'fetch': return 'text-blue-600 bg-blue-50'
-    case 'update': return 'text-emerald-600 bg-emerald-50'
-    case 'sync': return 'text-emerald-600 bg-emerald-50'
-    case 'report': return 'text-amber-600 bg-amber-50'
-    default: return 'text-gray-600 bg-gray-50'
+    case 'fetch': return { icon: 'text-blue-500', bg: 'bg-blue-500/10', ring: 'ring-blue-500/20' }
+    case 'update': return { icon: 'text-emerald-500', bg: 'bg-emerald-500/10', ring: 'ring-emerald-500/20' }
+    case 'sync': return { icon: 'text-teal-500', bg: 'bg-teal-500/10', ring: 'ring-teal-500/20' }
+    case 'report': return { icon: 'text-amber-500', bg: 'bg-amber-500/10', ring: 'ring-amber-500/20' }
+    default: return { icon: 'text-gray-500', bg: 'bg-gray-500/10', ring: 'ring-gray-500/20' }
   }
 }
 
 function formatRelativeTime(date: Date): string {
   const seconds = Math.floor((Date.now() - date.getTime()) / 1000)
   if (seconds < 5) return 'Just nu'
-  if (seconds < 60) return `för ${seconds}s sedan`
+  if (seconds < 60) return `${seconds}s`
   const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `för ${minutes}min sedan`
+  if (minutes < 60) return `${minutes}min`
   return date.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' })
 }
 
 export function EventLog() {
   const [events, setEvents] = useState<EventItem[]>([])
   const [expanded, setExpanded] = useState(false)
-  const [, setTick] = useState(0) // For re-rendering relative times
+  const [, setTick] = useState(0)
 
   useEffect(() => {
     const initialEvents: EventItem[] = []
@@ -85,7 +85,6 @@ export function EventLog() {
       setEvents(prev => [newEvent, ...prev.slice(0, 9)])
     }, 15000 + Math.random() * 30000)
 
-    // Update relative times every 10 seconds
     const tickInterval = setInterval(() => setTick(t => t + 1), 10000)
 
     return () => {
@@ -98,57 +97,68 @@ export function EventLog() {
   if (!latestEvent) return null
 
   const LatestIcon = getEventIcon(latestEvent.type)
-  const latestIconClass = getEventIconClass(latestEvent.type)
+  const latestColors = getEventColors(latestEvent.type)
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 1, duration: 0.4 }}
-      className="fixed bottom-4 right-4 z-50"
+      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ delay: 1.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed bottom-6 right-6 z-50"
     >
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden w-80">
-        {/* Header */}
+      <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl shadow-gray-900/10 border border-gray-200/50 overflow-hidden w-[340px]">
+        {/* Premium Header with gradient */}
         <button
           onClick={() => setExpanded(!expanded)}
-          className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
+          className="w-full px-5 py-4 flex items-center justify-between bg-gradient-to-r from-gray-50 to-white hover:from-gray-100 hover:to-gray-50 transition-all duration-300"
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <div className="relative">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full" />
-              <span className="absolute inset-0 w-2 h-2 bg-emerald-400 rounded-full animate-ping opacity-75" />
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                <Activity className="w-5 h-5 text-white" />
+              </div>
+              <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white animate-pulse" />
             </div>
-            <span className="text-sm font-medium text-gray-900">Händelser</span>
-            <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full">
-              {events.length}
-            </span>
+            <div className="text-left">
+              <span className="text-sm font-semibold text-gray-900 block">Händelselogg</span>
+              <span className="text-xs text-gray-500">{events.length} aktiviteter</span>
+            </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400">{formatRelativeTime(latestEvent.timestamp)}</span>
-            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
+            <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full">
+              Live
+            </span>
+            <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`} />
           </div>
         </button>
 
-        {/* Latest Event - Always visible */}
+        {/* Latest Event - Always visible with emphasis */}
         <AnimatePresence mode="wait">
           <motion.div
             key={latestEvent.id}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 10 }}
-            transition={{ duration: 0.2 }}
-            className="px-4 py-3 border-t border-gray-50 flex items-start gap-3"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="px-5 py-4 border-t border-gray-100 bg-gradient-to-r from-white to-gray-50/50"
           >
-            <div className={`mt-0.5 w-8 h-8 rounded-lg flex items-center justify-center ${latestIconClass}`}>
-              <LatestIcon className="w-4 h-4" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-gray-900">
-                {latestEvent.message.replace(' för', '')}
-              </p>
-              <p className="text-xs text-gray-500 mt-0.5">
-                <span className="font-medium">{latestEvent.company}</span>
-              </p>
+            <div className="flex items-start gap-4">
+              <div className={`w-10 h-10 rounded-xl ${latestColors.bg} ring-1 ${latestColors.ring} flex items-center justify-center flex-shrink-0`}>
+                <LatestIcon className={`w-5 h-5 ${latestColors.icon}`} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <Zap className="w-3 h-3 text-amber-500" />
+                  <span className="text-xs font-medium text-amber-600">Senaste</span>
+                  <span className="text-xs text-gray-400">· {formatRelativeTime(latestEvent.timestamp)}</span>
+                </div>
+                <p className="text-sm text-gray-900 font-medium">
+                  {latestEvent.message.replace(' för', '')}
+                </p>
+                <p className="text-sm text-gray-600 mt-0.5">
+                  {latestEvent.company}
+                </p>
+              </div>
             </div>
           </motion.div>
         </AnimatePresence>
@@ -160,36 +170,46 @@ export function EventLog() {
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               className="border-t border-gray-100 overflow-hidden"
             >
-              <div className="max-h-64 overflow-y-auto">
-                {events.slice(1).map((event, index) => {
-                  const EventIcon = getEventIcon(event.type)
-                  const iconClass = getEventIconClass(event.type)
-                  return (
-                    <motion.div
-                      key={event.id}
-                      initial={{ opacity: 0, y: -5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.03 }}
-                      className="px-4 py-2.5 flex items-start gap-3 hover:bg-gray-50 transition-colors"
-                    >
-                      <div className={`mt-0.5 w-6 h-6 rounded-md flex items-center justify-center ${iconClass} opacity-80`}>
-                        <EventIcon className="w-3 h-3" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs text-gray-700">
-                          {event.message.replace(' för', '')}
-                        </p>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-xs font-medium text-gray-900">{event.company}</span>
-                          <span className="text-[10px] text-gray-400">{formatRelativeTime(event.timestamp)}</span>
+              <div className="px-2 py-2">
+                <div className="max-h-72 overflow-y-auto scrollbar-hide">
+                  {events.slice(1).map((event, index) => {
+                    const EventIcon = getEventIcon(event.type)
+                    const colors = getEventColors(event.type)
+                    return (
+                      <motion.div
+                        key={event.id}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                        className="px-3 py-3 flex items-start gap-3 hover:bg-gray-50 rounded-xl transition-colors cursor-default group"
+                      >
+                        <div className={`w-8 h-8 rounded-lg ${colors.bg} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform`}>
+                          <EventIcon className={`w-4 h-4 ${colors.icon}`} />
                         </div>
-                      </div>
-                    </motion.div>
-                  )
-                })}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-gray-700">
+                            {event.message.replace(' för', '')}
+                          </p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-xs font-medium text-gray-900">{event.company}</span>
+                            <span className="w-1 h-1 rounded-full bg-gray-300" />
+                            <span className="text-xs text-gray-400">{formatRelativeTime(event.timestamp)}</span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="px-5 py-3 bg-gray-50 border-t border-gray-100">
+                <p className="text-xs text-gray-500 text-center">
+                  Visar senaste {events.length} händelser
+                </p>
               </div>
             </motion.div>
           )}

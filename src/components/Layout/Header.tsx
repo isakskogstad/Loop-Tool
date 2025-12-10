@@ -40,27 +40,30 @@ export function Header() {
   return (
     <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
       {/* Top accent line */}
-      <div className="h-1 bg-gradient-to-r from-loop-lime via-emerald-400 to-loop-lime" />
+      <div className="h-1.5 bg-gradient-to-r from-loop-lime via-emerald-400 to-loop-lime" />
 
-      <div className="px-4 sm:px-6 py-3">
-        <div className="flex items-center justify-between gap-4">
-          {/* Left: Logo and Title */}
-          <div className="flex items-center gap-3 min-w-0">
-            <img
-              src="/impact-loop-logo.svg"
-              alt="Impact Loop"
-              className="h-8 sm:h-10 w-auto flex-shrink-0"
-            />
-            <div className="min-w-0">
-              <h1 className="font-bold text-gray-900 text-lg sm:text-xl tracking-tight truncate">
-                Loop Tool
-              </h1>
-              <p className="text-xs text-gray-500 hidden sm:block">Impact Investing Database</p>
-            </div>
+      {/* Main Title - Centered above content */}
+      <div className="py-6 text-center border-b border-gray-100">
+        <div className="flex items-center justify-center gap-4">
+          <img
+            src="/impact-loop-logo.svg"
+            alt="Impact Loop"
+            className="h-12 sm:h-14 w-auto"
+          />
+          <div>
+            <h1 className="font-serif font-bold text-gray-900 text-3xl sm:text-4xl tracking-tight">
+              Loop <span className="text-loop-lime">Tool</span>
+            </h1>
+            <p className="text-sm text-gray-500 mt-1">Impact Investing Database</p>
           </div>
+        </div>
+      </div>
 
-          {/* Center: Search */}
-          <div className="flex-1 max-w-md hidden sm:block">
+      {/* Search Bar Row */}
+      <div className="px-6 py-4">
+        <div className="flex items-center justify-between gap-6">
+          {/* Search - Now primary element */}
+          <div className="flex-1 max-w-xl">
             {searchOpen ? (
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />

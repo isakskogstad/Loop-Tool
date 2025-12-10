@@ -1,7 +1,7 @@
-import { TrendingUp, TrendingDown, ExternalLink, ChevronUp, ChevronDown, ChevronsUpDown, Globe, FileText, Award, Users, Linkedin, Bell, DollarSign, Percent, UserCheck, Building, Filter, Download, ChevronLeft, ChevronRight } from 'lucide-react'
+import { TrendingUp, TrendingDown, ExternalLink, ChevronUp, ChevronDown, ChevronsUpDown, Globe, FileText, Award, Users, Linkedin, Bell, DollarSign, Percent, UserCheck, Building, Filter, Download, Loader2 } from 'lucide-react'
 import type { CompanyWithCoords } from '../../lib/supabase'
 import { useMapContext } from '../../context/MapContext'
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 
 interface DataTableProps {
   companies: CompanyWithCoords[]
@@ -117,7 +117,7 @@ function getSectorColor(sector: string | null) {
 function SkeletonRow({ columns }: { columns: number }) {
   return (
     <tr className="border-t border-gray-100 animate-pulse">
-      <td className="px-4 py-4 sticky left-0 bg-white">
+      <td className="px-4 py-5 sticky left-0 bg-white">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gray-200" />
           <div className="space-y-2">
@@ -127,7 +127,7 @@ function SkeletonRow({ columns }: { columns: number }) {
         </div>
       </td>
       {Array.from({ length: columns - 1 }).map((_, i) => (
-        <td key={i} className="px-3 py-4">
+        <td key={i} className="px-4 py-5">
           <div className="h-4 w-16 bg-gray-200 rounded ml-auto" />
         </td>
       ))}
@@ -155,87 +155,13 @@ function EmptyState({ message, onClear }: { message: string; onClear?: () => voi
   )
 }
 
-// Pagination component
-function Pagination({
-  page,
-  pageSize,
-  total,
-  onPageChange
-}: {
-  page: number
-  pageSize: number
-  total: number
-  onPageChange: (page: number) => void
-}) {
-  const totalPages = Math.ceil(total / pageSize)
-
-  const getPageNumbers = () => {
-    const pages: (number | 'ellipsis')[] = []
-    const maxVisible = 5
-
-    if (totalPages <= maxVisible + 2) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i)
-    } else {
-      pages.push(1)
-
-      let start = Math.max(2, page - 1)
-      let end = Math.min(totalPages - 1, page + 1)
-
-      if (page <= 3) end = Math.min(maxVisible, totalPages - 1)
-      if (page >= totalPages - 2) start = Math.max(2, totalPages - maxVisible + 1)
-
-      if (start > 2) pages.push('ellipsis')
-      for (let i = start; i <= end; i++) pages.push(i)
-      if (end < totalPages - 1) pages.push('ellipsis')
-      if (totalPages > 1) pages.push(totalPages)
-    }
-
-    return pages
-  }
-
-  if (totalPages <= 1) return null
-
+// Loading Indicator for infinite scroll
+function LoadingIndicator() {
   return (
-    <div className="flex items-center justify-between">
-      <p className="text-sm text-gray-500">
-        Sida {page} av {totalPages}
-        <span className="hidden sm:inline"> · {total.toLocaleString('sv-SE')} företag</span>
-      </p>
-
-      <div className="flex items-center gap-1">
-        <button
-          onClick={() => onPageChange(page - 1)}
-          disabled={page <= 1}
-          className="px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          <ChevronLeft className="w-4 h-4" />
-        </button>
-
-        {getPageNumbers().map((p, i) =>
-          p === 'ellipsis' ? (
-            <span key={`ellipsis-${i}`} className="px-2 text-gray-400">...</span>
-          ) : (
-            <button
-              key={p}
-              onClick={() => onPageChange(p)}
-              className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
-                page === p
-                  ? 'bg-gray-900 text-white font-medium'
-                  : 'text-gray-500 hover:bg-gray-100'
-              }`}
-            >
-              {p}
-            </button>
-          )
-        )}
-
-        <button
-          onClick={() => onPageChange(page + 1)}
-          disabled={page >= totalPages}
-          className="px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-100 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
+    <div className="flex items-center justify-center py-6">
+      <div className="flex items-center gap-3 text-gray-500">
+        <Loader2 className="w-5 h-5 animate-spin text-emerald-500" />
+        <span className="text-sm font-medium">Laddar fler företag...</span>
       </div>
     </div>
   )
@@ -246,12 +172,21 @@ export function DataTable({ companies, isLoading = false }: DataTableProps) {
   const [sortField, setSortField] = useState<SortField | null>(null)
   const [sortDirection, setSortDirection] = useState<SortDirection>(null)
   const [expandedBoards, setExpandedBoards] = useState<Set<string>>(new Set())
-  const [currentPage, setCurrentPage] = useState(1)
-  const pageSize = 50
 
-  // Reset page when filters change
+  // Infinite scroll state
+  const [visibleCount, setVisibleCount] = useState(50)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const loadMoreRef = useRef<HTMLDivElement>(null)
+  const tableContainerRef = useRef<HTMLDivElement>(null)
+  const ITEMS_PER_LOAD = 30
+
+  // Reset visible count when filters change
   useEffect(() => {
-    setCurrentPage(1)
+    setVisibleCount(50)
+    // Scroll to top when filters change
+    if (tableContainerRef.current) {
+      tableContainerRef.current.scrollTop = 0
+    }
   }, [filters.search, filters.sector])
 
   const toggleBoardExpand = (orgnr: string, e: React.MouseEvent) => {
@@ -388,11 +323,47 @@ export function DataTable({ companies, isLoading = false }: DataTableProps) {
     return result
   }, [companies, filters.sector, filters.search, sortField, sortDirection])
 
-  // Paginate data
-  const paginatedCompanies = useMemo(() => {
-    const start = (currentPage - 1) * pageSize
-    return sortedAndFilteredCompanies.slice(start, start + pageSize)
-  }, [sortedAndFilteredCompanies, currentPage, pageSize])
+  // Get visible companies for infinite scroll
+  const visibleCompanies = useMemo(() => {
+    return sortedAndFilteredCompanies.slice(0, visibleCount)
+  }, [sortedAndFilteredCompanies, visibleCount])
+
+  const hasMore = visibleCount < sortedAndFilteredCompanies.length
+
+  // Load more companies
+  const loadMore = useCallback(() => {
+    if (isLoadingMore || !hasMore) return
+
+    setIsLoadingMore(true)
+    // Small delay for smooth UX
+    setTimeout(() => {
+      setVisibleCount(prev => Math.min(prev + ITEMS_PER_LOAD, sortedAndFilteredCompanies.length))
+      setIsLoadingMore(false)
+    }, 300)
+  }, [isLoadingMore, hasMore, sortedAndFilteredCompanies.length, ITEMS_PER_LOAD])
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
+          loadMore()
+        }
+      },
+      { threshold: 0.1, rootMargin: '100px' }
+    )
+
+    const currentRef = loadMoreRef.current
+    if (currentRef) {
+      observer.observe(currentRef)
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef)
+      }
+    }
+  }, [hasMore, isLoadingMore, loadMore])
 
   // Clear all filters
   const handleClearFilters = () => {
@@ -400,9 +371,9 @@ export function DataTable({ companies, isLoading = false }: DataTableProps) {
   }
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-white p-4">
       {/* Toolbar */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50/50">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50/50 rounded-t-xl">
         <div className="flex items-center gap-2">
           <span className="text-sm text-gray-500">
             {sortedAndFilteredCompanies.length.toLocaleString('sv-SE')} företag
@@ -455,8 +426,8 @@ export function DataTable({ companies, isLoading = false }: DataTableProps) {
       </div>
 
       {/* Table Content */}
-      <div className="overflow-x-auto flex-1">
-        <table className="w-full min-w-[2200px]">
+      <div ref={tableContainerRef} className="overflow-auto flex-1 border border-gray-200 rounded-xl">
+        <table className="w-full min-w-[2400px]">
           <thead className="sticky top-0 bg-gray-50 border-b border-gray-200 z-10">
             <tr className="text-sm font-semibold text-gray-600">
               {/* Företag - Sticky */}
@@ -501,23 +472,23 @@ export function DataTable({ companies, isLoading = false }: DataTableProps) {
                   Funding {getSortIcon('funding')}
                 </button>
               </th>
-              <th className="px-3 py-4 text-right w-[100px] bg-emerald-50/50">
+              <th className="px-4 py-4 text-right w-[110px] bg-emerald-50/50">
                 <button onClick={() => handleSort('latestRound')} className="flex items-center justify-end gap-1.5 hover:text-gray-900 w-full">
-                  Sen. Runda {getSortIcon('latestRound')}
+                  Senaste Runda {getSortIcon('latestRound')}
                 </button>
               </th>
               <th className="px-3 py-4 text-center w-[90px] bg-emerald-50/50">
                 Runda Datum
               </th>
               {/* NYCKELTAL */}
-              <th className="px-3 py-4 text-right w-[100px]">
+              <th className="px-4 py-4 text-right w-[120px]">
                 <button onClick={() => handleSort('turnover')} className="flex items-center justify-end gap-1.5 hover:text-gray-900 w-full">
-                  Oms 2024 {getSortIcon('turnover')}
+                  Omsättning 2024 {getSortIcon('turnover')}
                 </button>
               </th>
-              <th className="px-3 py-4 text-right w-[100px]">
+              <th className="px-4 py-4 text-right w-[120px]">
                 <button onClick={() => handleSort('turnover2023')} className="flex items-center justify-end gap-1.5 hover:text-gray-900 w-full">
-                  Oms 2023 {getSortIcon('turnover2023')}
+                  Omsättning 2023 {getSortIcon('turnover2023')}
                 </button>
               </th>
               <th className="px-3 py-4 text-right w-[90px]">
@@ -540,12 +511,12 @@ export function DataTable({ companies, isLoading = false }: DataTableProps) {
                   Soliditet {getSortIcon('equityRatio')}
                 </button>
               </th>
-              <th className="px-3 py-4 text-right w-[70px]">
-                <button onClick={() => handleSort('employees')} className="flex items-center justify-end gap-1.5 hover:text-gray-900 w-full">
+              <th className="px-4 py-4 text-center w-[90px]">
+                <button onClick={() => handleSort('employees')} className="flex items-center justify-center gap-1.5 hover:text-gray-900 w-full">
                   Anställda {getSortIcon('employees')}
                 </button>
               </th>
-              <th className="px-3 py-4 text-left w-[90px]">
+              <th className="px-4 py-4 text-left w-[100px]">
                 <button onClick={() => handleSort('city')} className="flex items-center gap-1.5 hover:text-gray-900">
                   Stad {getSortIcon('city')}
                 </button>
@@ -555,23 +526,23 @@ export function DataTable({ companies, isLoading = false }: DataTableProps) {
                   SNI {getSortIcon('sniCode')}
                 </button>
               </th>
-              <th className="px-3 py-4 text-center w-[60px]" title="Varumärken">
+              <th className="px-4 py-4 text-center w-[100px]">
                 <button onClick={() => handleSort('trademarks')} className="flex items-center justify-center gap-1.5 hover:text-gray-900 w-full">
-                  VM {getSortIcon('trademarks')}
+                  Varumärken {getSortIcon('trademarks')}
                 </button>
               </th>
-              <th className="px-3 py-4 text-center w-[50px]" title="Årsredovisning">ÅR</th>
-              <th className="px-3 py-4 text-center w-[70px]" title="Investerare">
+              <th className="px-4 py-4 text-center w-[110px]">Årsredovisning</th>
+              <th className="px-4 py-4 text-center w-[100px]">
                 <button onClick={() => handleSort('investors')} className="flex items-center justify-center gap-1.5 hover:text-gray-900 w-full">
-                  Inv {getSortIcon('investors')}
+                  Investerare {getSortIcon('investors')}
                 </button>
               </th>
-              <th className="px-3 py-4 text-center w-[60px]" title="Kungörelser">
+              <th className="px-4 py-4 text-center w-[100px]">
                 <button onClick={() => handleSort('announcements')} className="flex items-center justify-center gap-1.5 hover:text-gray-900 w-full">
-                  Kung {getSortIcon('announcements')}
+                  Kungörelser {getSortIcon('announcements')}
                 </button>
               </th>
-              <th className="px-3 py-4 text-center w-[50px]" title="Emission">Em</th>
+              <th className="px-4 py-4 text-center w-[80px]">Emission</th>
               {/* KONCERN - Sist */}
               <th className="px-3 py-4 text-left w-[100px]">
                 <button onClick={() => handleSort('parentCompany')} className="flex items-center gap-1.5 hover:text-gray-900">
@@ -589,12 +560,12 @@ export function DataTable({ companies, isLoading = false }: DataTableProps) {
             ))}
 
             {/* Data Rows */}
-            {!isLoading && paginatedCompanies.map((company, index) => (
+            {!isLoading && visibleCompanies.map((company, index) => (
               <tr
                 key={company.orgnr}
                 onClick={() => setSelectedCompany(company)}
-                className={`cursor-pointer transition-colors hover:bg-gray-50 ${
-                  index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'
+                className={`cursor-pointer transition-colors hover:bg-emerald-50/50 ${
+                  index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'
                 }`}
               >
                 {/* Company Name - Sticky */}
@@ -629,64 +600,64 @@ export function DataTable({ companies, isLoading = false }: DataTableProps) {
                 </td>
 
                 {/* Sector */}
-                <td className="px-3 py-4">
+                <td className="px-4 py-4">
                   {company.sector ? (
-                    <span className={`inline-block px-2.5 py-1 rounded-md text-xs font-medium border ${getSectorColor(company.sector).bg} ${getSectorColor(company.sector).text} ${getSectorColor(company.sector).border} truncate max-w-[110px]`}>
+                    <span className={`inline-block px-3 py-1.5 rounded-lg text-sm font-medium border ${getSectorColor(company.sector).bg} ${getSectorColor(company.sector).text} ${getSectorColor(company.sector).border} truncate max-w-[130px]`}>
                       {company.sector}
                     </span>
                   ) : (
-                    <span className="text-gray-300 text-xs">-</span>
+                    <span className="text-gray-300 text-sm">-</span>
                   )}
                 </td>
 
                 {/* CEO */}
-                <td className="px-3 py-3">
+                <td className="px-4 py-4">
                   {company.ceo_name ? (
-                    <span className="text-xs text-gray-700 truncate max-w-[110px] block">{formatName(company.ceo_name)}</span>
+                    <span className="text-sm text-gray-700 truncate max-w-[120px] block">{formatName(company.ceo_name)}</span>
                   ) : (
-                    <span className="text-gray-300 text-xs">-</span>
+                    <span className="text-gray-300 text-sm">-</span>
                   )}
                 </td>
 
                 {/* Chairman */}
-                <td className="px-3 py-3">
+                <td className="px-4 py-4">
                   {company.chairman_name ? (
-                    <span className="text-xs text-gray-700 truncate max-w-[90px] block">{formatName(company.chairman_name)}</span>
+                    <span className="text-sm text-gray-700 truncate max-w-[110px] block">{formatName(company.chairman_name)}</span>
                   ) : (
-                    <span className="text-gray-300 text-xs">-</span>
+                    <span className="text-gray-300 text-sm">-</span>
                   )}
                 </td>
 
                 {/* Board Count - Expandable */}
-                <td className="px-2 py-2">
+                <td className="px-4 py-4">
                   {company.board_members && company.board_members.length > 0 ? (
                     <div className="relative">
                       <button
                         onClick={(e) => toggleBoardExpand(company.orgnr, e)}
-                        className="inline-flex items-center gap-0.5 text-xs text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-1 py-0.5 rounded transition-colors"
+                        className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-2 py-1 rounded transition-colors"
                         title="Klicka för att visa styrelseledamöter"
                       >
-                        <UserCheck className="w-3 h-3" />
+                        <UserCheck className="w-4 h-4" />
                         {company.board_members.length}
                       </button>
                       {expandedBoards.has(company.orgnr) && (
-                        <div className="absolute left-0 top-full mt-1 z-20 bg-white border border-gray-200 rounded-lg shadow-lg p-2 min-w-[180px]">
-                          <div className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-1">Styrelse</div>
-                          <ul className="space-y-0.5">
+                        <div className="absolute left-0 top-full mt-1 z-30 bg-white border border-gray-200 rounded-lg shadow-lg p-3 min-w-[200px]">
+                          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Styrelse</div>
+                          <ul className="space-y-1">
                             {company.board_members.map((member, i) => (
-                              <li key={i} className="text-xs text-gray-700">{member}</li>
+                              <li key={i} className="text-sm text-gray-700">{member}</li>
                             ))}
                           </ul>
                         </div>
                       )}
                     </div>
                   ) : (
-                    <span className="text-gray-300 text-xs">-</span>
+                    <span className="text-gray-300 text-sm">-</span>
                   )}
                 </td>
 
                 {/* Owners - Expandable like board */}
-                <td className="px-2 py-2">
+                <td className="px-4 py-4">
                   {company.owners && company.owners.length > 0 ? (
                     <div className="relative">
                       <button
@@ -700,18 +671,18 @@ export function DataTable({ companies, isLoading = false }: DataTableProps) {
                             return next
                           })
                         }}
-                        className="inline-flex items-center gap-0.5 text-xs text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-1 py-0.5 rounded transition-colors"
+                        className="inline-flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-2 py-1 rounded transition-colors"
                         title="Klicka för att visa ägare"
                       >
-                        <Users className="w-3 h-3" />
+                        <Users className="w-4 h-4" />
                         {company.owners.length}
                       </button>
                       {expandedBoards.has(`owners-${company.orgnr}`) && (
-                        <div className="absolute left-0 top-full mt-1 z-20 bg-white border border-gray-200 rounded-lg shadow-lg p-2 min-w-[220px]">
-                          <div className="text-[10px] font-medium text-gray-500 uppercase tracking-wide mb-1">Huvudägare</div>
-                          <ul className="space-y-1">
+                        <div className="absolute left-0 top-full mt-1 z-30 bg-white border border-gray-200 rounded-lg shadow-lg p-3 min-w-[240px]">
+                          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Huvudägare</div>
+                          <ul className="space-y-1.5">
                             {company.owners.slice(0, 5).map((owner, i) => (
-                              <li key={i} className="text-xs text-gray-700 flex justify-between gap-2">
+                              <li key={i} className="text-sm text-gray-700 flex justify-between gap-3">
                                 <span className="truncate">{formatName(owner.name)}</span>
                                 {owner.percent && (
                                   <span className="text-gray-500 font-mono whitespace-nowrap">{owner.percent.toFixed(1)} %</span>
@@ -723,57 +694,57 @@ export function DataTable({ companies, isLoading = false }: DataTableProps) {
                       )}
                     </div>
                   ) : (
-                    <span className="text-gray-300 text-xs">-</span>
+                    <span className="text-gray-300 text-sm">-</span>
                   )}
                 </td>
 
                 {/* VÄRDERING & FUNDING FÖRST - Viktig investeringsdata (med subtil bakgrund) */}
                 {/* Valuation */}
-                <td className="px-2 py-2 text-right bg-emerald-50/30">
-                  <span className="font-semibold text-emerald-800 text-xs tabular-nums">
+                <td className="px-4 py-4 text-right bg-emerald-50/30">
+                  <span className="font-semibold text-emerald-800 text-sm tabular-nums">
                     {formatCurrency(company.latest_valuation_sek)}
                   </span>
                 </td>
 
                 {/* Total Funding */}
-                <td className="px-2 py-2 text-right bg-emerald-50/30">
-                  <span className="text-xs text-emerald-700 tabular-nums">
+                <td className="px-4 py-4 text-right bg-emerald-50/30">
+                  <span className="text-sm text-emerald-700 tabular-nums">
                     {formatCurrency(company.total_funding_sek)}
                   </span>
                 </td>
 
                 {/* Latest Round */}
-                <td className="px-2 py-2 text-right bg-emerald-50/30">
-                  <span className="text-xs text-emerald-700 tabular-nums">
+                <td className="px-4 py-4 text-right bg-emerald-50/30">
+                  <span className="text-sm text-emerald-700 tabular-nums">
                     {formatCurrency(company.latest_funding_round_sek)}
                   </span>
                 </td>
 
                 {/* Latest Funding Date */}
-                <td className="px-2 py-2 text-center bg-emerald-50/30">
-                  <span className="text-xs text-emerald-600">
+                <td className="px-4 py-4 text-center bg-emerald-50/30">
+                  <span className="text-sm text-emerald-600">
                     {formatDate(company.latest_funding_date)}
                   </span>
                 </td>
 
                 {/* NYCKELTAL */}
                 {/* Turnover 2024 */}
-                <td className="px-2 py-2 text-right">
-                  <span className="font-medium text-gray-900 text-xs tabular-nums">
+                <td className="px-4 py-4 text-right">
+                  <span className="font-medium text-gray-900 text-sm tabular-nums">
                     {formatCurrency(company.turnover_2024_sek)}
                   </span>
                 </td>
 
                 {/* Turnover 2023 */}
-                <td className="px-2 py-2 text-right">
-                  <span className="text-xs text-gray-600 tabular-nums">
+                <td className="px-4 py-4 text-right">
+                  <span className="text-sm text-gray-600 tabular-nums">
                     {formatCurrency(company.turnover_2023_sek)}
                   </span>
                 </td>
 
                 {/* EBIT 2023 */}
-                <td className="px-2 py-2 text-right">
-                  <span className={`text-xs tabular-nums ${
+                <td className="px-4 py-4 text-right">
+                  <span className={`text-sm tabular-nums ${
                     company.ebit_2023_sek && company.ebit_2023_sek < 0 ? 'text-red-600' : 'text-gray-600'
                   }`}>
                     {formatCurrency(company.ebit_2023_sek)}
@@ -781,8 +752,8 @@ export function DataTable({ companies, isLoading = false }: DataTableProps) {
                 </td>
 
                 {/* EBIT 2024 */}
-                <td className="px-2 py-2 text-right">
-                  <span className={`text-xs tabular-nums ${
+                <td className="px-4 py-4 text-right">
+                  <span className={`text-sm tabular-nums ${
                     company.ebit_2024_sek && company.ebit_2024_sek < 0 ? 'text-red-600' : 'text-gray-600'
                   }`}>
                     {formatCurrency(company.ebit_2024_sek)}
@@ -790,41 +761,41 @@ export function DataTable({ companies, isLoading = false }: DataTableProps) {
                 </td>
 
                 {/* Growth */}
-                <td className="px-2 py-2 text-right">
+                <td className="px-4 py-4 text-right">
                   {company.growth_2023_2024_percent !== null ? (
-                    <span className={`inline-flex items-center gap-0.5 font-medium text-xs tabular-nums ${
+                    <span className={`inline-flex items-center gap-1 font-medium text-sm tabular-nums ${
                       company.growth_2023_2024_percent >= 0 ? 'text-green-600' : 'text-red-600'
                     }`}>
                       {company.growth_2023_2024_percent >= 0 ? (
-                        <TrendingUp className="w-3 h-3" />
+                        <TrendingUp className="w-3.5 h-3.5" />
                       ) : (
-                        <TrendingDown className="w-3 h-3" />
+                        <TrendingDown className="w-3.5 h-3.5" />
                       )}
                       {formatPercent(company.growth_2023_2024_percent)}
                     </span>
                   ) : (
-                    <span className="text-gray-300 text-xs">-</span>
+                    <span className="text-gray-300 text-sm">-</span>
                   )}
                 </td>
 
                 {/* Equity Ratio (Soliditet) */}
-                <td className="px-2 py-2 text-right">
+                <td className="px-4 py-4 text-right">
                   {company.equity_ratio !== null ? (
-                    <span className={`inline-flex items-center gap-0.5 text-xs tabular-nums ${
+                    <span className={`inline-flex items-center gap-1 text-sm tabular-nums ${
                       company.equity_ratio >= 30 ? 'text-green-600' : company.equity_ratio >= 15 ? 'text-yellow-600' : 'text-red-600'
                     }`}>
-                      <Percent className="w-3 h-3" />
+                      <Percent className="w-3.5 h-3.5" />
                       {company.equity_ratio.toFixed(0)}
                     </span>
                   ) : (
-                    <span className="text-gray-300 text-xs">-</span>
+                    <span className="text-gray-300 text-sm">-</span>
                   )}
                 </td>
 
                 {/* Employees */}
-                <td className="px-2 py-2 text-right">
+                <td className="px-4 py-4 text-center">
                   {company.num_employees ? (
-                    <span className="text-xs text-gray-700 tabular-nums font-medium">
+                    <span className="text-sm text-gray-700 tabular-nums font-medium">
                       {company.num_employees.toLocaleString('sv-SE')}
                     </span>
                   ) : (
@@ -833,120 +804,120 @@ export function DataTable({ companies, isLoading = false }: DataTableProps) {
                 </td>
 
                 {/* City */}
-                <td className="px-2 py-2">
+                <td className="px-4 py-4 text-left">
                   {company.city ? (
-                    <span className="text-xs text-gray-600 truncate max-w-[70px] block">{formatName(company.city)}</span>
+                    <span className="text-sm text-gray-600 truncate max-w-[90px] block">{formatName(company.city)}</span>
                   ) : (
                     <span className="text-gray-300 text-xs">-</span>
                   )}
                 </td>
 
                 {/* SNI Code */}
-                <td className="px-2 py-2">
+                <td className="px-4 py-4">
                   {company.industries && company.industries.length > 0 ? (
                     <span
-                      className="text-xs text-gray-600 truncate max-w-[50px] block font-mono"
+                      className="text-sm text-gray-600 truncate max-w-[60px] block font-mono"
                       title={`${company.industries[0].sniCode}: ${company.industries[0].sniDescription || ''}`}
                     >
                       {company.industries[0].sniCode}
                     </span>
                   ) : (
-                    <span className="text-gray-300 text-xs">-</span>
+                    <span className="text-gray-300 text-sm">-</span>
                   )}
                 </td>
 
                 {/* Trademarks */}
-                <td className="px-2 py-2 text-center">
+                <td className="px-4 py-4 text-center">
                   {company.trademarks && company.trademarks.length > 0 ? (
-                    <span className="inline-flex items-center gap-0.5 text-xs text-amber-700">
-                      <Award className="w-3 h-3" />
+                    <span className="inline-flex items-center gap-1 text-sm text-amber-700">
+                      <Award className="w-4 h-4" />
                       {company.trademarks.length}
                     </span>
                   ) : (
-                    <span className="text-gray-300 text-xs">-</span>
+                    <span className="text-gray-300 text-sm">-</span>
                   )}
                 </td>
 
                 {/* Annual Report */}
-                <td className="px-2 py-2 text-center">
+                <td className="px-4 py-4 text-center">
                   {company.annual_report_year ? (
                     <a
                       href={`https://www.allabolag.se/${company.orgnr}/arsredovisning`}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="inline-flex items-center gap-0.5 text-xs text-blue-600 hover:text-blue-800"
+                      className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
                       title={`Årsredovisning ${company.annual_report_year}`}
                     >
-                      <FileText className="w-3 h-3" />
+                      <FileText className="w-4 h-4" />
                       {company.annual_report_year}
                     </a>
                   ) : (
-                    <span className="text-gray-300 text-xs">-</span>
+                    <span className="text-gray-300 text-sm">-</span>
                   )}
                 </td>
 
                 {/* Investors */}
-                <td className="px-2 py-2 text-center">
+                <td className="px-4 py-4 text-center">
                   {company.investors && company.investors.length > 0 ? (
                     <span
-                      className="inline-flex items-center gap-0.5 text-xs text-purple-700"
+                      className="inline-flex items-center gap-1 text-sm text-purple-700"
                       title={company.investors.map(i => i.name).join(', ')}
                     >
-                      <Users className="w-3 h-3" />
+                      <Users className="w-4 h-4" />
                       {company.investors.length}
                     </span>
                   ) : (
-                    <span className="text-gray-300 text-xs">-</span>
+                    <span className="text-gray-300 text-sm">-</span>
                   )}
                 </td>
 
                 {/* Announcements */}
-                <td className="px-2 py-2 text-center">
+                <td className="px-4 py-4 text-center">
                   {company.announcement_count > 0 ? (
                     <span
-                      className="inline-flex items-center gap-0.5 text-xs text-orange-600"
+                      className="inline-flex items-center gap-1 text-sm text-orange-600"
                       title={`${company.announcement_count} kungörelser${company.latest_announcement_date ? `, senast ${formatDate(company.latest_announcement_date)}` : ''}`}
                     >
-                      <Bell className="w-3 h-3" />
+                      <Bell className="w-4 h-4" />
                       {company.announcement_count}
                     </span>
                   ) : (
-                    <span className="text-gray-300 text-xs">-</span>
+                    <span className="text-gray-300 text-sm">-</span>
                   )}
                 </td>
 
                 {/* Equity Offering */}
-                <td className="px-2 py-2 text-center">
+                <td className="px-4 py-4 text-center">
                   {company.equity_offering ? (
                     <span
-                      className="inline-flex items-center gap-0.5 text-xs text-green-700 font-medium"
+                      className="inline-flex items-center gap-1 text-sm text-green-700 font-medium"
                       title={`${company.equity_offering.offeringType}${company.equity_offering.amountSek ? ` - ${formatCurrency(company.equity_offering.amountSek)}` : ''}`}
                     >
-                      <DollarSign className="w-3 h-3" />
+                      <DollarSign className="w-4 h-4" />
                     </span>
                   ) : (
-                    <span className="text-gray-300 text-xs">-</span>
+                    <span className="text-gray-300 text-sm">-</span>
                   )}
                 </td>
 
                 {/* KONCERN - Sist */}
-                <td className="px-2 py-2">
+                <td className="px-4 py-4">
                   {(company.parent_name || company.group_top_name) ? (
                     <span
-                      className="inline-flex items-center gap-0.5 text-xs text-gray-600 truncate max-w-[80px]"
+                      className="inline-flex items-center gap-1 text-sm text-gray-600 truncate max-w-[100px]"
                       title={company.group_top_name || company.parent_name || ''}
                     >
-                      <Building className="w-3 h-3 flex-shrink-0" />
+                      <Building className="w-4 h-4 flex-shrink-0" />
                       <span className="truncate">{company.parent_name || company.group_top_name}</span>
                     </span>
                   ) : (
-                    <span className="text-gray-300 text-xs">-</span>
+                    <span className="text-gray-300 text-sm">-</span>
                   )}
                 </td>
 
                 {/* LÄNKAR - Större och tydligare knappar */}
-                <td className="px-3 py-2">
+                <td className="px-4 py-4">
                   <div className="flex items-center gap-2">
                     {company.website && (
                       <a
@@ -998,16 +969,33 @@ export function DataTable({ companies, isLoading = false }: DataTableProps) {
             onClear={(filters.search || filters.sector) ? handleClearFilters : undefined}
           />
         )}
+
+        {/* Infinite scroll sentinel */}
+        {!isLoading && sortedAndFilteredCompanies.length > 0 && (
+          <div ref={loadMoreRef} className="py-4">
+            {isLoadingMore && <LoadingIndicator />}
+          </div>
+        )}
       </div>
 
-      {/* Footer with Pagination */}
-      <div className="border-t border-gray-200 px-4 py-3 bg-gray-50">
-        <Pagination
-          page={currentPage}
-          pageSize={pageSize}
-          total={sortedAndFilteredCompanies.length}
-          onPageChange={setCurrentPage}
-        />
+      {/* Footer with progress */}
+      <div className="border-t border-gray-200 px-6 py-4 bg-gray-50 rounded-b-xl">
+        <div className="flex items-center justify-between">
+          <span className="text-sm text-gray-500">
+            Visar <span className="font-semibold text-gray-700">{visibleCompanies.length.toLocaleString('sv-SE')}</span> av{' '}
+            <span className="font-semibold text-gray-700">{sortedAndFilteredCompanies.length.toLocaleString('sv-SE')}</span> företag
+          </span>
+          {hasMore && (
+            <span className="text-xs text-gray-400">
+              Scrolla för att ladda fler
+            </span>
+          )}
+          {!hasMore && sortedAndFilteredCompanies.length > 0 && (
+            <span className="text-xs text-emerald-600 font-medium">
+              Alla företag laddade
+            </span>
+          )}
+        </div>
       </div>
     </div>
   )

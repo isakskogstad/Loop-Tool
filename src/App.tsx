@@ -106,51 +106,51 @@ function LoadingScreen() {
   )
 }
 
-// View Toggle Component - iOS Segmented Control Style
+// View Toggle Component - Large prominent buttons
 function ViewToggle() {
   const { viewMode, setViewMode } = useMapContext()
 
   return (
-    <div className="flex justify-center py-3 bg-gray-50/50 border-t border-gray-100">
-      <div className="inline-flex items-center bg-gray-100 rounded-lg p-1">
+    <div className="flex justify-center py-6 bg-gray-50/80 border-t border-gray-100">
+      <div className="inline-flex items-center bg-gray-200/80 rounded-2xl p-2 gap-2 shadow-inner">
         <button
           onClick={() => setViewMode('map')}
-          className={`relative flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+          className={`relative flex items-center gap-3 px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-300 ${
             viewMode === 'map'
-              ? 'text-gray-900'
-              : 'text-gray-500 hover:text-gray-700'
+              ? 'text-white'
+              : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
           }`}
         >
           {viewMode === 'map' && (
             <motion.div
               layoutId="viewToggleBackground"
-              className="absolute inset-0 bg-white rounded-md shadow-sm"
+              className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-500 rounded-xl shadow-lg"
               initial={false}
-              transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
             />
           )}
-          <Map className="w-4 h-4 relative z-10" />
-          <span className="relative z-10">Karta</span>
+          <Map className="w-6 h-6 relative z-10" />
+          <span className="relative z-10">Visa på karta</span>
         </button>
 
         <button
           onClick={() => setViewMode('table')}
-          className={`relative flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+          className={`relative flex items-center gap-3 px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-300 ${
             viewMode === 'table'
-              ? 'text-gray-900'
-              : 'text-gray-500 hover:text-gray-700'
+              ? 'text-white'
+              : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
           }`}
         >
           {viewMode === 'table' && (
             <motion.div
               layoutId="viewToggleBackground"
-              className="absolute inset-0 bg-white rounded-md shadow-sm"
+              className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-teal-500 rounded-xl shadow-lg"
               initial={false}
-              transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
             />
           )}
-          <Table2 className="w-4 h-4 relative z-10" />
-          <span className="relative z-10">Tabell</span>
+          <Table2 className="w-6 h-6 relative z-10" />
+          <span className="relative z-10">Visa som tabell</span>
         </button>
       </div>
     </div>
