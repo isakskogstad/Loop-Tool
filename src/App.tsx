@@ -112,8 +112,8 @@ function MapApp() {
         {/* Header */}
         <Header companyCount={companies.length} loading={loading} />
 
-        {/* Stats Bar */}
-        <div className="pt-[76px]">
+        {/* Stats Bar - adjusted for taller header with filter pills */}
+        <div className="pt-[120px]">
           <StatsBar companies={companies} loading={loading} />
         </div>
 

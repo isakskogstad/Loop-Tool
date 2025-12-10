@@ -1,4 +1,4 @@
-import { Search, X, Map, Table2 } from 'lucide-react'
+import { Search, X, Map, Table2, Filter, Sparkles } from 'lucide-react'
 import { useMapContext } from '../../context/MapContext'
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -8,9 +8,13 @@ interface HeaderProps {
   loading: boolean
 }
 
+// Popular sectors to show as quick filters
+const QUICK_SECTORS = ['Climate Tech', 'Health Tech', 'Fintech', 'EdTech', 'Impact']
+
 export function Header({ companyCount, loading }: HeaderProps) {
   const { filters, setFilters, viewMode, setViewMode } = useMapContext()
   const [searchOpen, setSearchOpen] = useState(false)
+  const [showFilters, setShowFilters] = useState(false)
 
   return (
     <header className="fixed top-0 left-0 right-0 z-[999]">
@@ -71,14 +75,14 @@ export function Header({ companyCount, loading }: HeaderProps) {
 
           {/* View Toggle & Search */}
           <div className="flex items-center gap-3">
-            {/* View Toggle */}
-            <div className="flex items-center bg-gradient-to-br from-gray-100 to-gray-50 rounded-2xl p-1.5 shadow-inner border border-gray-200/40">
+            {/* Premium View Toggle with lime accent */}
+            <div className="flex items-center bg-loop-black rounded-2xl p-1 shadow-xl border border-gray-800">
               <button
                 onClick={() => setViewMode('map')}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
                   viewMode === 'map'
-                    ? 'bg-white text-gray-900 shadow-lg shadow-gray-200/50 scale-105'
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
+                    ? 'bg-gradient-to-r from-loop-lime to-loop-lime-dark text-loop-black shadow-lg shadow-lime-500/30 scale-105'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
                 }`}
               >
                 <Map className="w-4 h-4" />
@@ -86,10 +90,10 @@ export function Header({ companyCount, loading }: HeaderProps) {
               </button>
               <button
                 onClick={() => setViewMode('table')}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
                   viewMode === 'table'
-                    ? 'bg-white text-gray-900 shadow-lg shadow-gray-200/50 scale-105'
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-white/50'
+                    ? 'bg-gradient-to-r from-loop-lime to-loop-lime-dark text-loop-black shadow-lg shadow-lime-500/30 scale-105'
+                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
                 }`}
               >
                 <Table2 className="w-4 h-4" />
@@ -154,6 +158,57 @@ export function Header({ companyCount, loading }: HeaderProps) {
             </AnimatePresence>
           </div>
         </div>
+
+        {/* Quick Filter Pills */}
+        {!loading && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="flex items-center gap-2 mt-4 overflow-x-auto pb-1 scrollbar-hide"
+          >
+            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide mr-2 flex-shrink-0">
+              Filter:
+            </span>
+
+            {/* All button */}
+            <button
+              onClick={() => setFilters({ ...filters, sector: null })}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 flex-shrink-0 ${
+                !filters.sector
+                  ? 'bg-loop-lime text-loop-black shadow-md'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              <Sparkles className="w-3 h-3" />
+              Alla
+            </button>
+
+            {/* Sector pills */}
+            {QUICK_SECTORS.map((sector) => (
+              <button
+                key={sector}
+                onClick={() => setFilters({ ...filters, sector: filters.sector === sector ? null : sector })}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 flex-shrink-0 ${
+                  filters.sector === sector
+                    ? 'bg-primary-blue text-white shadow-md'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {sector}
+              </button>
+            ))}
+
+            {/* Filter button for more */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200 transition-all duration-200 flex-shrink-0"
+            >
+              <Filter className="w-3 h-3" />
+              Mer
+            </button>
+          </motion.div>
+        )}
       </div>
     </header>
   )

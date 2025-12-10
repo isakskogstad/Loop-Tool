@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { FC } from 'react'
 import { motion } from 'framer-motion'
-import { TrendingUp, Building2, Target, Sparkles } from 'lucide-react'
+import { TrendingUp, Building2, Wallet, Zap } from 'lucide-react'
 import type { CompanyWithCoords } from '../../lib/supabase'
 
 interface StatsBarProps {
@@ -9,28 +9,18 @@ interface StatsBarProps {
   loading: boolean
 }
 
-interface StatItemProps {
-  icon: React.ReactNode
-  label: string
-  value: number
-  suffix?: string
-  prefix?: string
-  delay?: number
-  gradient?: string
-}
-
-function StatItem({ icon, label, value, suffix = '', prefix = '', delay = 0, gradient = 'from-loop-lime to-loop-lime-dark' }: StatItemProps) {
+// Animated counter hook
+function useAnimatedCounter(value: number, duration: number = 2000) {
   const [count, setCount] = useState(0)
 
   useEffect(() => {
     if (value === 0) return
 
-    const duration = 2000 // 2 seconds
     const steps = 60
     const increment = value / steps
     const stepDuration = duration / steps
-
     let current = 0
+
     const timer = setInterval(() => {
       current += increment
       if (current >= value) {
@@ -42,36 +32,77 @@ function StatItem({ icon, label, value, suffix = '', prefix = '', delay = 0, gra
     }, stepDuration)
 
     return () => clearInterval(timer)
-  }, [value])
+  }, [value, duration])
+
+  return count
+}
+
+// Hero stat component - larger and more prominent
+function HeroStat({ value, label, suffix = '', icon }: { value: number; label: string; suffix?: string; icon: React.ReactNode }) {
+  const animatedValue = useAnimatedCounter(value)
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.6, ease: 'easeOut' }}
+      className="relative bg-gradient-to-br from-loop-black via-gray-900 to-loop-black rounded-3xl p-6 text-white overflow-hidden group"
+    >
+      {/* Animated gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-loop-lime/10 via-transparent to-primary-blue/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+      {/* Glow effect */}
+      <div className="absolute -top-20 -right-20 w-40 h-40 bg-loop-lime/20 rounded-full blur-3xl" />
+
+      <div className="relative">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="p-2 bg-loop-lime/20 rounded-xl">
+            {icon}
+          </div>
+          <span className="text-sm font-semibold text-gray-400 uppercase tracking-wider">{label}</span>
+        </div>
+        <div className="flex items-baseline gap-2">
+          <span className="text-5xl sm:text-6xl font-bold tabular-nums bg-gradient-to-r from-loop-lime via-white to-loop-lime bg-clip-text text-transparent">
+            {animatedValue.toLocaleString('sv-SE')}
+          </span>
+          {suffix && <span className="text-2xl font-semibold text-gray-400">{suffix}</span>}
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+// Regular stat component
+function StatCard({ value, label, suffix = '', prefix = '', icon, gradient, delay = 0 }: {
+  value: number
+  label: string
+  suffix?: string
+  prefix?: string
+  icon: React.ReactNode
+  gradient: string
+  delay?: number
+}) {
+  const animatedValue = useAnimatedCounter(value)
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.5, ease: 'easeOut' }}
-      className="group relative"
+      transition={{ delay, duration: 0.5 }}
+      className="relative bg-white rounded-2xl p-5 border border-gray-200/60 shadow-sm hover:shadow-xl hover:border-gray-300 transition-all duration-300 group overflow-hidden"
     >
-      {/* Gradient background on hover */}
-      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-5 rounded-2xl transition-opacity duration-300`} />
+      {/* Hover gradient */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`} />
 
-      <div className="relative px-6 py-5 rounded-2xl bg-white/60 backdrop-blur-sm border border-gray-200/60 shadow-sm hover:shadow-lg hover:border-gray-300/60 transition-all duration-300">
-        <div className="flex items-start gap-4">
-          {/* Icon */}
-          <div className={`p-3 rounded-xl bg-gradient-to-br ${gradient} shadow-md group-hover:shadow-lg group-hover:scale-110 transition-all duration-300`}>
-            <div className="text-white">
-              {icon}
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-500 mb-1 uppercase tracking-wide">
-              {label}
-            </p>
-            <p className="text-3xl font-bold text-gray-900 tabular-nums">
-              {prefix}{count.toLocaleString('sv-SE')}{suffix}
-            </p>
-          </div>
+      <div className="relative flex items-center gap-4">
+        <div className={`p-3 rounded-xl bg-gradient-to-br ${gradient} shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300`}>
+          <div className="text-white">{icon}</div>
+        </div>
+        <div>
+          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">{label}</p>
+          <p className="text-2xl font-bold text-gray-900 tabular-nums">
+            {prefix}{animatedValue.toLocaleString('sv-SE')}{suffix}
+          </p>
         </div>
       </div>
     </motion.div>
@@ -81,12 +112,15 @@ function StatItem({ icon, label, value, suffix = '', prefix = '', delay = 0, gra
 export const StatsBar: FC<StatsBarProps> = ({ companies, loading }) => {
   if (loading) {
     return (
-      <div className="w-full px-6 py-8 bg-gradient-to-b from-white/80 to-gray-50/80 backdrop-blur-md border-b border-gray-200/60">
+      <div className="w-full px-4 sm:px-6 py-6">
         <div className="max-w-screen-xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-32 bg-gray-100 rounded-2xl animate-pulse" />
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="md:col-span-1 h-36 bg-gray-200 rounded-3xl animate-pulse" />
+            <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-24 bg-gray-100 rounded-2xl animate-pulse" />
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -96,75 +130,61 @@ export const StatsBar: FC<StatsBarProps> = ({ companies, loading }) => {
   // Calculate statistics
   const totalCompanies = companies.length
 
-  const totalFunding = companies.reduce((sum, company) =>
-    sum + (company.total_funding_sek || 0), 0
-  ) / 1_000_000 // Convert to millions
+  const totalFunding = companies.reduce((sum, c) => sum + (c.total_funding_sek || 0), 0) / 1_000_000_000 // Billions
 
   const companiesWithGrowth = companies.filter(c =>
     c.growth_2023_2024_percent !== null && c.growth_2023_2024_percent > 0
   ).length
 
-  const avgGrowth = companies.reduce((sum, company) => {
-    if (company.growth_2023_2024_percent !== null && company.growth_2023_2024_percent > 0) {
-      return sum + company.growth_2023_2024_percent
+  const avgGrowth = companies.reduce((sum, c) => {
+    if (c.growth_2023_2024_percent !== null) {
+      return sum + c.growth_2023_2024_percent
     }
     return sum
-  }, 0) / (companiesWithGrowth || 1)
+  }, 0) / (companies.filter(c => c.growth_2023_2024_percent !== null).length || 1)
 
   return (
-    <div className="w-full px-6 py-8 bg-gradient-to-b from-white/80 to-gray-50/80 backdrop-blur-md border-b border-gray-200/60">
+    <div className="w-full px-4 sm:px-6 py-6">
       <div className="max-w-screen-xl mx-auto">
-        {/* Title */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-6"
-        >
-          <h2 className="text-2xl md:text-3xl font-serif font-bold text-gray-900 mb-2">
-            Impact-företag i Sverige
-          </h2>
-          <p className="text-sm text-gray-500 font-medium">
-            Översikt av svenska impact-företag med fokus på tillväxt och finansiering
-          </p>
-        </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {/* Hero stat - Company count */}
+          <div className="md:col-span-1">
+            <HeroStat
+              value={totalCompanies}
+              label="Impact-företag"
+              icon={<Building2 className="w-5 h-5 text-loop-lime" />}
+            />
+          </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatItem
-            icon={<Building2 className="w-6 h-6" />}
-            label="Företag"
-            value={totalCompanies}
-            delay={0.1}
-            gradient="from-primary-blue to-blue-600"
-          />
+          {/* Regular stats */}
+          <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <StatCard
+              value={Math.round(totalFunding * 10) / 10}
+              label="Total Funding"
+              suffix=" mdr kr"
+              icon={<Wallet className="w-5 h-5" />}
+              gradient="from-primary-blue to-blue-600"
+              delay={0.1}
+            />
 
-          <StatItem
-            icon={<TrendingUp className="w-6 h-6" />}
-            label="Total Finansiering"
-            value={Math.round(totalFunding)}
-            suffix=" mkr"
-            delay={0.2}
-            gradient="from-loop-lime to-loop-lime-dark"
-          />
+            <StatCard
+              value={Math.round(avgGrowth * 10) / 10}
+              label="Snitt Tillväxt"
+              suffix="%"
+              prefix={avgGrowth >= 0 ? '+' : ''}
+              icon={<TrendingUp className="w-5 h-5" />}
+              gradient="from-teal to-emerald-500"
+              delay={0.2}
+            />
 
-          <StatItem
-            icon={<Target className="w-6 h-6" />}
-            label="Snitt Tillväxt"
-            value={Math.round(avgGrowth * 10) / 10}
-            suffix="%"
-            prefix="+"
-            delay={0.3}
-            gradient="from-teal to-green-500"
-          />
-
-          <StatItem
-            icon={<Sparkles className="w-6 h-6" />}
-            label="Med Positiv Tillväxt"
-            value={companiesWithGrowth}
-            delay={0.4}
-            gradient="from-purple to-pink-600"
-          />
+            <StatCard
+              value={companiesWithGrowth}
+              label="Positiv Tillväxt"
+              icon={<Zap className="w-5 h-5" />}
+              gradient="from-purple to-pink-500"
+              delay={0.3}
+            />
+          </div>
         </div>
       </div>
     </div>
