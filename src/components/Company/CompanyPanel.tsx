@@ -236,10 +236,28 @@ export function CompanyPanel() {
                       </span>
                     </div>
                   )}
-                  {selectedCompany.ceo_contact && (
+                  {selectedCompany.ceo_name && (
                     <div className="flex justify-between px-4 py-3 border-b border-gray-200 hover:bg-white transition-colors">
                       <span className="text-gray-600 text-sm font-medium">VD</span>
-                      <span className="text-gray-900 text-sm font-semibold">{selectedCompany.ceo_contact}</span>
+                      <span className="text-gray-900 text-sm font-semibold">{selectedCompany.ceo_name}</span>
+                    </div>
+                  )}
+                  {selectedCompany.chairman_name && (
+                    <div className="flex justify-between px-4 py-3 border-b border-gray-200 hover:bg-white transition-colors">
+                      <span className="text-gray-600 text-sm font-medium">Ordförande</span>
+                      <span className="text-gray-900 text-sm font-semibold">{selectedCompany.chairman_name}</span>
+                    </div>
+                  )}
+                  {selectedCompany.num_employees && (
+                    <div className="flex justify-between px-4 py-3 border-b border-gray-200 hover:bg-white transition-colors">
+                      <span className="text-gray-600 text-sm font-medium">Anställda</span>
+                      <span className="text-gray-900 text-sm font-semibold">{selectedCompany.num_employees}</span>
+                    </div>
+                  )}
+                  {selectedCompany.board_members.length > 0 && (
+                    <div className="flex justify-between px-4 py-3 border-b border-gray-200 hover:bg-white transition-colors">
+                      <span className="text-gray-600 text-sm font-medium">Styrelseledamöter</span>
+                      <span className="text-gray-900 text-sm font-semibold">{selectedCompany.board_members.length} st</span>
                     </div>
                   )}
                   <div className="flex justify-between px-4 py-3 hover:bg-white transition-colors">

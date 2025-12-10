@@ -44,8 +44,12 @@ const createClusterIcon = (cluster: any) => {
 export function MapView({ companies }: MapContainerProps) {
   const { filters } = useMapContext()
 
-  // Filter companies based on search and sector
+  // Filter companies based on search, sector, AND valid coordinates
   const filteredCompanies = companies.filter(company => {
+    // Must have valid coordinates for map view
+    if (!company.latitude || !company.longitude) {
+      return false
+    }
     if (filters.sector && company.sector !== filters.sector) {
       return false
     }
@@ -54,7 +58,8 @@ export function MapView({ companies }: MapContainerProps) {
       return (
         company.name.toLowerCase().includes(search) ||
         company.city?.toLowerCase().includes(search) ||
-        company.sector?.toLowerCase().includes(search)
+        company.sector?.toLowerCase().includes(search) ||
+        company.ceo_name?.toLowerCase().includes(search)
       )
     }
     return true

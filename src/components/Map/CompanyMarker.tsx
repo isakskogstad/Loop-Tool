@@ -44,6 +44,9 @@ export function CompanyMarker({ company }: CompanyMarkerProps) {
   const { selectedCompany, setSelectedCompany, setHoveredCompany } = useMapContext()
   const isSelected = selectedCompany?.orgnr === company.orgnr
 
+  // At this point, coordinates are guaranteed to exist (filtered in MapContainer)
+  if (!company.latitude || !company.longitude) return null
+
   return (
     <Marker
       position={[company.latitude, company.longitude]}

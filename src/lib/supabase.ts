@@ -5,53 +5,176 @@ const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-export interface LoopCompany {
-  id: string
+// Types
+export interface CompanyWithCoords {
   orgnr: string
-  company_name: string
-  sector: string | null
-  investment_status: string | null
-  ceo_contact: string | null
+  name: string
+  latitude: number | null
+  longitude: number | null
   city: string | null
-  foundation_date: string | null
-  total_funding_sek: number | null
-  latest_funding_round_sek: number | null
-  latest_funding_date: string | null
-  latest_valuation_sek: number | null
+  county: string | null
+  logo_url: string | null
+  website: string | null
+  sector: string | null
   turnover_2024_sek: number | null
-  ebit_2024_sek: number | null
   turnover_2023_sek: number | null
+  ebit_2024_sek: number | null
   ebit_2023_sek: number | null
+  total_funding_sek: number | null
+  latest_valuation_sek: number | null
   growth_2023_2024_percent: number | null
-  largest_owners: string | null
+  foundation_date: string | null
+  ceo_name: string | null
+  chairman_name: string | null
+  board_members: string[]
+  num_employees: number | null
+  investment_status: string | null
 }
 
-export interface LoopOwner {
-  id: string
-  orgnr: string
-  owner_name: string
-  owner_type: string | null
-  ownership_percent: number | null
+export interface Role {
+  company_orgnr: string
+  name: string
+  role_type: string
 }
 
-export interface LoopSector {
-  id: string
-  orgnr: string
-  sector_name: string
-  is_primary: boolean
-}
+// Fetch all companies from loop_table with enriched data
+export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
+  console.log('Starting fetchCompaniesWithCoords...')
 
-export async function fetchLoopCompanies(limit = 100): Promise<LoopCompany[]> {
-  const { data, error } = await supabase
+  // 1. Fetch ALL companies from loop_table (primary source - 1214 companies)
+  const { data: loopData, error: loopError } = await supabase
     .from('loop_table')
-    .select('*')
+    .select(`
+      orgnr,
+      company_name,
+      sector,
+      city,
+      foundation_date,
+      total_funding_sek,
+      latest_valuation_sek,
+      turnover_2024_sek,
+      turnover_2023_sek,
+      ebit_2024_sek,
+      ebit_2023_sek,
+      growth_2023_2024_percent,
+      investment_status
+    `)
     .order('turnover_2024_sek', { ascending: false, nullsFirst: false })
-    .limit(limit)
 
-  if (error) throw error
-  return data || []
+  console.log('Loop table query result:', { count: loopData?.length, error: loopError })
+
+  if (loopError) {
+    console.error('Loop table query error:', loopError)
+    throw loopError
+  }
+
+  // 2. Fetch coordinates and extra info from companies table
+  const { data: companiesData, error: companiesError } = await supabase
+    .from('companies')
+    .select(`
+      orgnr,
+      latitude,
+      longitude,
+      county,
+      logo_url,
+      website,
+      num_employees
+    `)
+
+  console.log('Companies query result:', { count: companiesData?.length, error: companiesError })
+
+  if (companiesError) {
+    console.error('Companies query error:', companiesError)
+    throw companiesError
+  }
+
+  // 3. Fetch roles (VD, ordförande, styrelseledamöter)
+  const { data: rolesData, error: rolesError } = await supabase
+    .from('roles')
+    .select(`
+      company_orgnr,
+      name,
+      role_type
+    `)
+    .in('role_type', ['Verkställande direktör', 'Extern verkställande direktör', 'Ordförande', 'Ledamot'])
+
+  console.log('Roles query result:', { count: rolesData?.length, error: rolesError })
+
+  if (rolesError) {
+    console.error('Roles query error:', rolesError)
+    // Don't throw - roles are optional
+  }
+
+  // Create lookup maps
+  const companiesMap = new Map(companiesData?.map(c => [c.orgnr, c]) || [])
+
+  // Group roles by company
+  const rolesMap = new Map<string, Role[]>()
+  rolesData?.forEach(role => {
+    const existing = rolesMap.get(role.company_orgnr) || []
+    existing.push(role)
+    rolesMap.set(role.company_orgnr, existing)
+  })
+
+  // Merge all data
+  const result = (loopData || []).map(company => {
+    const companyInfo = companiesMap.get(company.orgnr)
+    const roles = rolesMap.get(company.orgnr) || []
+
+    // Find VD
+    const vd = roles.find(r =>
+      r.role_type === 'Verkställande direktör' ||
+      r.role_type === 'Extern verkställande direktör'
+    )
+
+    // Find chairman
+    const chairman = roles.find(r => r.role_type === 'Ordförande')
+
+    // Find board members (excluding VD and chairman)
+    const boardMembers = roles
+      .filter(r => r.role_type === 'Ledamot')
+      .map(r => r.name)
+      .slice(0, 5) // Max 5 board members
+
+    // Parse coordinates
+    const lat = companyInfo?.latitude
+      ? (typeof companyInfo.latitude === 'string' ? parseFloat(companyInfo.latitude) : Number(companyInfo.latitude))
+      : null
+    const lng = companyInfo?.longitude
+      ? (typeof companyInfo.longitude === 'string' ? parseFloat(companyInfo.longitude) : Number(companyInfo.longitude))
+      : null
+
+    return {
+      orgnr: company.orgnr,
+      name: company.company_name,
+      latitude: lat,
+      longitude: lng,
+      city: company.city,
+      county: companyInfo?.county || null,
+      logo_url: companyInfo?.logo_url || null,
+      website: companyInfo?.website || null,
+      sector: company.sector,
+      turnover_2024_sek: company.turnover_2024_sek,
+      turnover_2023_sek: company.turnover_2023_sek,
+      ebit_2024_sek: company.ebit_2024_sek,
+      ebit_2023_sek: company.ebit_2023_sek,
+      total_funding_sek: company.total_funding_sek,
+      latest_valuation_sek: company.latest_valuation_sek,
+      growth_2023_2024_percent: company.growth_2023_2024_percent,
+      foundation_date: company.foundation_date,
+      ceo_name: vd?.name || null,
+      chairman_name: chairman?.name || null,
+      board_members: boardMembers,
+      num_employees: companyInfo?.num_employees || null,
+      investment_status: company.investment_status,
+    }
+  })
+
+  console.log(`Returning ${result.length} companies`)
+  return result
 }
 
+// Stats functions
 export async function fetchStats() {
   const [companies, owners, sectors, financials] = await Promise.all([
     supabase.from('loop_table').select('id', { count: 'exact', head: true }),
@@ -84,111 +207,4 @@ export async function fetchSectorDistribution() {
     .map(([name, count]) => ({ name, count }))
     .sort((a, b) => b.count - a.count)
     .slice(0, 10)
-}
-
-export async function fetchTopCompanies(limit = 10) {
-  const { data, error } = await supabase
-    .from('loop_table')
-    .select('company_name, turnover_2024_sek, growth_2023_2024_percent, sector, city')
-    .not('turnover_2024_sek', 'is', null)
-    .order('turnover_2024_sek', { ascending: false })
-    .limit(limit)
-
-  if (error) throw error
-  return data || []
-}
-
-// Map data types
-export interface CompanyWithCoords {
-  orgnr: string
-  name: string
-  latitude: number
-  longitude: number
-  city: string | null
-  county: string | null
-  logo_url: string | null
-  sector: string | null
-  turnover_2024_sek: number | null
-  total_funding_sek: number | null
-  latest_valuation_sek: number | null
-  growth_2023_2024_percent: number | null
-  foundation_date: string | null
-  ceo_contact: string | null
-  investment_status: string | null
-}
-
-export async function fetchCompaniesWithCoords(): Promise<CompanyWithCoords[]> {
-  console.log('Starting fetchCompaniesWithCoords...')
-
-  // Join companies (with coords) and loop_table (with financials)
-  const { data, error } = await supabase
-    .from('companies')
-    .select(`
-      orgnr,
-      name,
-      latitude,
-      longitude,
-      city,
-      county,
-      logo_url
-    `)
-    .not('latitude', 'is', null)
-    .not('longitude', 'is', null)
-
-  console.log('Companies query result:', { count: data?.length, error })
-
-  if (error) {
-    console.error('Companies query error:', error)
-    throw error
-  }
-
-  // Get loop_table data for enrichment
-  const { data: loopData, error: loopError } = await supabase
-    .from('loop_table')
-    .select(`
-      orgnr,
-      sector,
-      turnover_2024_sek,
-      total_funding_sek,
-      latest_valuation_sek,
-      growth_2023_2024_percent,
-      foundation_date,
-      ceo_contact,
-      investment_status
-    `)
-
-  console.log('Loop table query result:', { count: loopData?.length, error: loopError })
-
-  if (loopError) {
-    console.error('Loop table query error:', loopError)
-    throw loopError
-  }
-
-  // Create lookup map for loop_table data
-  const loopMap = new Map(loopData?.map(l => [l.orgnr, l]) || [])
-
-  // Merge data
-  return (data || []).map(company => {
-    const loopInfo = loopMap.get(company.orgnr)
-    // Handle both string and number types for lat/lng
-    const lat = typeof company.latitude === 'string' ? parseFloat(company.latitude) : Number(company.latitude)
-    const lng = typeof company.longitude === 'string' ? parseFloat(company.longitude) : Number(company.longitude)
-    return {
-      orgnr: company.orgnr,
-      name: company.name,
-      latitude: lat,
-      longitude: lng,
-      city: company.city,
-      county: company.county,
-      logo_url: company.logo_url,
-      sector: loopInfo?.sector || null,
-      turnover_2024_sek: loopInfo?.turnover_2024_sek || null,
-      total_funding_sek: loopInfo?.total_funding_sek || null,
-      latest_valuation_sek: loopInfo?.latest_valuation_sek || null,
-      growth_2023_2024_percent: loopInfo?.growth_2023_2024_percent || null,
-      foundation_date: loopInfo?.foundation_date || null,
-      ceo_contact: loopInfo?.ceo_contact || null,
-      investment_status: loopInfo?.investment_status || null,
-    }
-  })
 }
