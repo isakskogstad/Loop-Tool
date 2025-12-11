@@ -165,7 +165,7 @@ class POITAnnouncement(BaseModel):
     subcategory: Optional[str] = None
     company_name: Optional[str] = None
     orgnr: Optional[str] = None
-    published_date: str
+    publication_date: str
     details: Optional[Dict[str, Any]] = None
     source_url: Optional[str] = None
     scraped_at: Optional[str] = None
@@ -189,7 +189,7 @@ app = FastAPI(
     **Autentisering:** Kräver X-API-Key header
     **Rate Limits:** 100 req/min generellt, 10 req/min för berikning
     """,
-    version="3.4.0",
+    version="3.4.1",
     docs_url="/docs",
     redoc_url="/redoc"
 )
@@ -332,7 +332,7 @@ MIT - Se [LICENSE](LICENSE)
 
 ---
 
-**Version 3.4.0** | [API Status](https://loop-auto-api.onrender.com/health)
+**Version 3.4.1** | [API Status](https://loop-auto-api.onrender.com/health)
 """
 
 
@@ -1308,8 +1308,8 @@ async def get_poit_daily_stats(request: Request):
     db = get_database()
 
     try:
-        # Get the most recent stats
-        result = db.client.table('poit_daily_stats') \
+        # Get the most recent stats - FIXED: using correct table name
+        result = db.client.table('poit_sync_stats') \
             .select('*') \
             .order('date', desc=True) \
             .limit(1) \
@@ -1349,7 +1349,8 @@ async def get_poit_stats_by_date(
     db = get_database()
 
     try:
-        result = db.client.table('poit_daily_stats') \
+        # FIXED: using correct table name
+        result = db.client.table('poit_sync_stats') \
             .select('*') \
             .eq('date', stats_date) \
             .limit(1) \
@@ -1400,11 +1401,12 @@ async def get_poit_bankruptcies(
         from datetime import timedelta
         start_date = (datetime.now() - timedelta(days=days)).strftime('%Y-%m-%d')
 
+        # FIXED: using correct column name publication_date instead of published_date
         result = db.client.table('poit_announcements') \
             .select('*') \
             .eq('category', 'konkurser') \
-            .gte('published_date', start_date) \
-            .order('published_date', desc=True) \
+            .gte('publication_date', start_date) \
+            .order('publication_date', desc=True) \
             .limit(limit) \
             .execute()
 
@@ -1447,16 +1449,17 @@ async def get_poit_announcements(
         from datetime import timedelta
         start_date = (datetime.now() - timedelta(days=days)).strftime('%Y-%m-%d')
 
+        # FIXED: using correct column name publication_date instead of published_date
         query = db.client.table('poit_announcements') \
             .select('*') \
-            .gte('published_date', start_date)
+            .gte('publication_date', start_date)
 
         if category:
             query = query.eq('category', category)
         if subcategory:
             query = query.eq('subcategory', subcategory)
 
-        query = query.order('published_date', desc=True).limit(limit)
+        query = query.order('publication_date', desc=True).limit(limit)
 
         result = query.execute()
 
@@ -1490,10 +1493,11 @@ async def get_company_poit_announcements(
     db = get_database()
 
     try:
+        # FIXED: using correct column name publication_date instead of published_date
         result = db.client.table('poit_announcements') \
             .select('*') \
             .eq('orgnr', orgnr) \
-            .order('published_date', desc=True) \
+            .order('publication_date', desc=True) \
             .limit(limit) \
             .execute()
 
@@ -1805,11 +1809,11 @@ async def search_company_news(
         client = SwedishNewsClient()
 
         # Search for articles mentioning the company
-        articles = client.search_news(company_name, limit=limit)
+        articles = client.search_company(company_name, limit=limit)
 
         return {
             "foretag": company_name,
-            "antal": len(articles),
+            "antal": len(articles.articles),
             "nyheter": [
                 {
                     "titel": a.title,
@@ -1819,7 +1823,7 @@ async def search_company_news(
                     "publicerad": getattr(a, 'published_at', None),
                     "bild_url": getattr(a, 'image_url', None)
                 }
-                for a in articles
+                for a in articles.articles
             ]
         }
     except ImportError:
@@ -1856,10 +1860,11 @@ async def get_latest_news(
         client = SwedishNewsClient()
 
         if source:
+            # Single source - use get_latest with string
             articles = client.get_latest(source, limit=limit)
         else:
-            # Get from multiple sources
-            articles = client.get_latest(['breakit', 'realtid', 'techcrunch'], limit=limit)
+            # Multiple sources - FIXED: use get_from_sources instead of get_latest with list
+            articles = client.get_from_sources(['breakit', 'realtid', 'techcrunch'], limit=limit)
 
         return {
             "kalla": source or "mixed",
